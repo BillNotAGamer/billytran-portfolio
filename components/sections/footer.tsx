@@ -1,0 +1,36 @@
+﻿import { portfolioData } from "@/data/portfolio";
+import { Container } from "@/components/ui/container";
+import { SignatureGlyph } from "@/components/ui/signature-glyph";
+
+export function Footer() {
+  return (
+    <footer className="border-t border-white/[0.06] py-8">
+      <Container>
+        <div className="flex flex-col gap-6 text-sm text-muted lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-3">
+            <SignatureGlyph size="xs" subdued className="text-accent" />
+            <p>
+              {portfolioData.name} • Software Engineer • Fullstack Web Developer •
+              Mobile Developer
+            </p>
+          </div>
+
+          <nav aria-label="Footer" className="flex flex-wrap gap-4">
+            {portfolioData.navigation.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-md transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+
+        <p className="mt-5 text-sm text-muted-strong">{portfolioData.footer.note}</p>
+      </Container>
+    </footer>
+  );
+}
+

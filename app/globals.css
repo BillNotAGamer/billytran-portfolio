@@ -1,26 +1,145 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #07090f;
+  --foreground: #f5f7fb;
+  --muted: #96a0b2;
+  --muted-strong: #c7cfdb;
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: #8de0ff;
+  --accent-secondary: #79a1ff;
+  --accent-warm: #dcb47b;
+  --font-sans: "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  --font-display: "Aptos Display", "Segoe UI Variable Display", "Segoe UI",
+    sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-warm: var(--accent-warm);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top, rgba(121, 161, 255, 0.16), transparent 34%),
+    radial-gradient(circle at 18% 16%, rgba(141, 224, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 82% 4%, rgba(220, 180, 123, 0.09), transparent 24%),
+    var(--background);
 }
 
 body {
-  background: var(--background);
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05), transparent 30%),
+    linear-gradient(180deg, rgba(8, 11, 17, 0.35), rgba(7, 9, 15, 0)),
+    var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+body::before,
+body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+}
+
+body::before {
+  background:
+    repeating-linear-gradient(
+      125deg,
+      rgba(255, 255, 255, 0.035) 0,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 154px
+    );
+  opacity: 0.1;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), transparent 80%);
+}
+
+body::after {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(141, 224, 255, 0.06), transparent 20%),
+    radial-gradient(circle at 82% 14%, rgba(220, 180, 123, 0.06), transparent 18%),
+    radial-gradient(circle at 50% 50%, transparent 42%, rgba(7, 9, 15, 0.5) 100%);
+}
+
+::selection {
+  background: rgba(141, 224, 255, 0.26);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 2px solid rgba(141, 224, 255, 0.85);
+  outline-offset: 4px;
+}
+
+a,
+button,
+input,
+textarea {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.section-frame {
+  position: relative;
+}
+
+.section-frame::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08) 18%,
+    rgba(141, 224, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.08) 82%,
+    transparent
+  );
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
