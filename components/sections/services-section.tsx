@@ -1,17 +1,19 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 
-export function ServicesSection() {
+export function ServicesSection({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <SiteSection id="services" labelledBy="services-title">
       <SectionHeading
-        eyebrow="What Billy Builds"
-        title="Delivery across the interface, the backend, and the product system behind both."
-        description="Positioned for teams that need more than surface-level implementation. Each service card is tuned to communicate capability without feeling broad or generic."
+        eyebrow={portfolioData.servicesSection.eyebrow}
+        title={portfolioData.servicesSection.title}
+        description={portfolioData.servicesSection.description}
         titleId="services-title"
       />
 

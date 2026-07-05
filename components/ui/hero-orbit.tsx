@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   motion,
@@ -7,7 +7,7 @@ import {
   useSpring,
 } from "framer-motion";
 import type { PointerEvent } from "react";
-import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { useMotionReady } from "@/components/ui/use-motion-ready";
 
@@ -45,7 +45,8 @@ const orbitSpring = {
   mass: 0.45,
 } as const;
 
-export function HeroOrbit() {
+export function HeroOrbit({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
   const { motionEnabled } = useMotionReady();
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
@@ -129,17 +130,16 @@ export function HeroOrbit() {
             <div className="flex items-start justify-between gap-5">
               <div>
                 <p className="text-sm uppercase tracking-[0.24em] text-accent/80">
-                  Signature Focus
+                  {portfolioData.hero.orbitEyebrow}
                 </p>
                 <h3 className="mt-4 max-w-xs font-display text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-[2.1rem]">
-                  Calm systems. Sharp execution. Product continuity.
+                  {portfolioData.hero.orbitTitle}
                 </h3>
               </div>
               <SignatureGlyph size="md" className="text-accent-warm/85" />
             </div>
             <p className="mt-5 text-sm leading-7 text-muted-strong sm:text-base">
-              Billy works at the point where interface precision, backend rigor,
-              and mobile delivery need to feel like one coherent product system.
+              {portfolioData.hero.orbitDescription}
             </p>
           </div>
 

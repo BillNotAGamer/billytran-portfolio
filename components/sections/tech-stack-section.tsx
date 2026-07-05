@@ -1,4 +1,4 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
@@ -6,13 +6,15 @@ import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
 
-export function TechStackSection() {
+export function TechStackSection({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <SiteSection id="tech-stack" labelledBy="tech-stack-title">
       <SectionHeading
-        eyebrow="Tech Stack"
-        title="A modern toolkit across frontend, backend, mobile, and production infrastructure."
-        description="Organized for clarity and maintainability, making it easy to swap, expand, or tailor Billy's stack over time without touching the section structure."
+        eyebrow={portfolioData.tech.eyebrow}
+        title={portfolioData.tech.title}
+        description={portfolioData.tech.description}
         titleId="tech-stack-title"
       />
 
@@ -30,7 +32,7 @@ export function TechStackSection() {
                     <SignatureGlyph size="xs" subdued className="text-accent" />
                   </div>
                   <p className="mt-2 text-xs uppercase tracking-[0.22em] text-muted">
-                    {group.items.length} focused tools
+                    {group.items.length} {portfolioData.tech.focusedToolsLabel}
                   </p>
 
                   <ul className="mt-6 flex flex-wrap gap-3">

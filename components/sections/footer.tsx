@@ -1,8 +1,10 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { Container } from "@/components/ui/container";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 
-export function Footer() {
+export function Footer({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <footer className="border-t border-white/[0.06] py-8">
       <Container>
@@ -10,8 +12,7 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <SignatureGlyph size="xs" subdued className="text-accent" />
             <p>
-              {portfolioData.name} • Software Engineer • Fullstack Web Developer •
-              Mobile Developer
+              {portfolioData.name} • {portfolioData.footer.roleLine}
             </p>
           </div>
 
@@ -27,8 +28,6 @@ export function Footer() {
             ))}
           </nav>
         </div>
-
-        <p className="mt-5 text-sm text-muted-strong">{portfolioData.footer.note}</p>
       </Container>
     </footer>
   );

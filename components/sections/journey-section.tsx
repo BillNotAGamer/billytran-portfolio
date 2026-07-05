@@ -1,21 +1,23 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 
-export function JourneySection() {
+export function JourneySection({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <SiteSection id="journey" labelledBy="journey-title">
       <SectionHeading
-        eyebrow="Journey"
-        title="A trajectory centered on product depth, technical range, and useful delivery."
-        description="Instead of a resume dump, this section frames Billy's path as a sequence of sharper capabilities and stronger product judgment."
+        eyebrow={portfolioData.journeySection.eyebrow}
+        title={portfolioData.journeySection.title}
+        description={portfolioData.journeySection.description}
         titleId="journey-title"
       />
 
-      <ol className="relative mt-14 space-y-6 before:absolute before:bottom-0 before:left-[1.1rem] before:top-0 before:w-px before:bg-[linear-gradient(180deg,rgba(141,224,255,0.35),rgba(255,255,255,0.06))] sm:before:left-[7.5rem]">
+      <ol className="relative mt-14 space-y-6 before:absolute before:bottom-0 before:left-[1.1rem] before:top-0 before:w-px before:bg-[linear-gradient(180deg,rgba(141,224,255,0.35),transparent 95%)] sm:before:left-[7.5rem]">
         {portfolioData.journey.map((item, index) => {
           const itemTitleId = `journey-item-${item.phase}`;
 

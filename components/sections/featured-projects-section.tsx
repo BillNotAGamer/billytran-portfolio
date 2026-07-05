@@ -1,4 +1,4 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -8,7 +8,9 @@ import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
 
-export function FeaturedProjectsSection() {
+export function FeaturedProjectsSection({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <SiteSection id="featured-projects" labelledBy="featured-projects-title">
       <div className="relative">
@@ -16,9 +18,9 @@ export function FeaturedProjectsSection() {
           <SignatureBlueprint />
         </div>
         <SectionHeading
-          eyebrow="Featured Projects"
-          title="Selected products shaped for clarity, system depth, and measured product impact."
-          description="The projects below are polished placeholder case studies you can replace with live work. The structure is already tuned for stronger storytelling, metrics, and deeper project detail later."
+          eyebrow={portfolioData.projectsSection.eyebrow}
+          title={portfolioData.projectsSection.title}
+          description={portfolioData.projectsSection.description}
           titleId="featured-projects-title"
         />
       </div>
@@ -91,13 +93,13 @@ export function FeaturedProjectsSection() {
 
                             <div className="mt-8 flex flex-wrap gap-3">
                               <ButtonLink href={project.links.preview} variant="primary">
-                                Preview
+                                {project.links.previewLabel}
                               </ButtonLink>
                               <ButtonLink
                                 href={project.links.repository}
                                 variant="secondary"
                               >
-                                Repository
+                                {project.links.repositoryLabel}
                               </ButtonLink>
                             </div>
                           </div>

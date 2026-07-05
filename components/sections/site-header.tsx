@@ -1,19 +1,22 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData, type Locale } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/ui/container";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 const navLinkClassName =
   "group relative rounded-full text-sm text-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-export function SiteHeader() {
+export function SiteHeader({ data, locale = "en" }: { data?: PortfolioData; locale?: Locale }) {
+  const portfolioData = data ?? getPortfolioData(locale);
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-background/68 backdrop-blur-xl">
       <Container>
         <div className="flex items-center justify-between gap-6 py-4">
           <a
             href="#top"
-            aria-label="Billy Tran home"
+            aria-label={`${portfolioData.header.brandName} home`}
             className="group flex items-center gap-4 rounded-full focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <SignatureGlyph
@@ -22,10 +25,10 @@ export function SiteHeader() {
             />
             <div>
               <p className="font-display text-lg font-semibold text-foreground">
-                Billy Tran
+                {portfolioData.header.brandName}
               </p>
               <p className="text-[0.72rem] uppercase tracking-[0.22em] text-muted">
-                Fullstack Systems + Mobile Delivery
+                {portfolioData.header.tagline}
               </p>
             </div>
           </a>
@@ -42,14 +45,15 @@ export function SiteHeader() {
           <div className="flex items-center gap-4">
             <div className="hidden xl:flex xl:items-center xl:gap-3 xl:text-sm xl:text-muted">
               <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_16px_rgba(141,224,255,0.8)]" />
-              {portfolioData.hero.availability}
+              {portfolioData.header.availability}
             </div>
+            <LanguageSwitcher locale={locale} />
             <ButtonLink
               href="#contact"
               variant="secondary"
               className="hidden sm:inline-flex"
             >
-              Let&apos;s Talk
+              {portfolioData.header.ctaLabel}
             </ButtonLink>
           </div>
         </div>

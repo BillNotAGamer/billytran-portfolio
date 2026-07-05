@@ -1,4 +1,4 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
@@ -6,12 +6,14 @@ import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
 
-export function AboutSection() {
+export function AboutSection({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <SiteSection id="about" labelledBy="about-title">
       <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <SectionHeading
-          eyebrow="About"
+          eyebrow={portfolioData.about.eyebrow}
           title={portfolioData.about.title}
           description={portfolioData.about.description}
           titleId="about-title"
@@ -65,7 +67,7 @@ export function AboutSection() {
               </ul>
 
               <ul className="flex flex-wrap gap-3">
-                {portfolioData.roles.map((role) => (
+                {portfolioData.about.roles.map((role) => (
                   <li key={role}>
                     <Tag>{role}</Tag>
                   </li>

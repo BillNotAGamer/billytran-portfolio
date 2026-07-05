@@ -1,4 +1,4 @@
-﻿import { portfolioData } from "@/data/portfolio";
+import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { HeroOrbit } from "@/components/ui/hero-orbit";
 import { Reveal } from "@/components/ui/reveal";
@@ -9,7 +9,9 @@ import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
 import { Container } from "@/components/ui/container";
 
-export function HeroSection() {
+export function HeroSection({ data }: { data?: PortfolioData }) {
+  const portfolioData = data ?? getPortfolioData("en");
+
   return (
     <section
       id="top"
@@ -30,7 +32,7 @@ export function HeroSection() {
 
             <Reveal delay={0.05}>
               <ul className="mt-6 flex flex-wrap gap-3">
-                {portfolioData.roles.map((role) => (
+                {portfolioData.about.roles.map((role) => (
                   <li key={role}>
                     <Tag>{role}</Tag>
                   </li>
@@ -59,10 +61,10 @@ export function HeroSection() {
 
             <Reveal delay={0.24} className="mt-8 flex flex-wrap gap-4">
               <ButtonLink href="#featured-projects" variant="primary">
-                View Projects
+                {portfolioData.hero.primaryCta}
               </ButtonLink>
               <ButtonLink href="#contact" variant="secondary">
-                Contact Me
+                {portfolioData.hero.secondaryCta}
               </ButtonLink>
             </Reveal>
 
@@ -107,7 +109,7 @@ export function HeroSection() {
           </div>
 
           <Reveal delay={0.16} className="lg:justify-self-end">
-            <HeroOrbit />
+            <HeroOrbit data={portfolioData} />
           </Reveal>
         </div>
       </Container>
