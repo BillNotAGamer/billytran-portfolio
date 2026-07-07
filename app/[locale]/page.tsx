@@ -37,12 +37,12 @@ export default async function LocalizedPage({ params }: PageProps) {
         <HeroSection data={data} />
         <AboutSection data={data} />
         <TechStackSection data={data} />
-        <FeaturedProjectsSection data={data} />
+        <FeaturedProjectsSection data={data} locale={locale as Locale} />
         <JourneySection data={data} />
         <ServicesSection data={data} />
-        <ContactSection data={data} />
+        <ContactSection data={data} locale={locale as Locale} />
       </main>
-      <Footer data={data} />
+      <Footer data={data} locale={locale as Locale} />
     </div>
   );
 }

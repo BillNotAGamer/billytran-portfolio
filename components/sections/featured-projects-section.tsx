@@ -1,4 +1,4 @@
-import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
+import { getPortfolioData, type Locale, type PortfolioData } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -7,9 +7,16 @@ import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
+import { getProjectPath, resolveLocalizedHref } from "@/lib/routes";
 
-export function FeaturedProjectsSection({ data }: { data?: PortfolioData }) {
-  const portfolioData = data ?? getPortfolioData("en");
+export function FeaturedProjectsSection({
+  data,
+  locale = "en",
+}: {
+  data?: PortfolioData;
+  locale?: Locale;
+}) {
+  const portfolioData = data ?? getPortfolioData(locale);
 
   return (
     <SiteSection id="featured-projects" labelledBy="featured-projects-title">
@@ -28,6 +35,8 @@ export function FeaturedProjectsSection({ data }: { data?: PortfolioData }) {
       <ol className="mt-14 grid gap-6 lg:grid-cols-2">
         {portfolioData.projects.map((project, index) => {
           const projectTitleId = `project-title-${index + 1}`;
+          const caseStudyHref = getProjectPath(locale, project.slug);
+          const previewHref = resolveLocalizedHref(locale, project.links.previewHref);
 
           return (
             <li
@@ -92,14 +101,11 @@ export function FeaturedProjectsSection({ data }: { data?: PortfolioData }) {
                             </div>
 
                             <div className="mt-8 flex flex-wrap gap-3">
-                              <ButtonLink href={project.links.preview} variant="primary">
-                                {project.links.previewLabel}
+                              <ButtonLink href={caseStudyHref} variant="primary">
+                                {project.links.detailLabel}
                               </ButtonLink>
-                              <ButtonLink
-                                href={project.links.repository}
-                                variant="secondary"
-                              >
-                                {project.links.repositoryLabel}
+                              <ButtonLink href={previewHref} variant="secondary">
+                                {project.links.previewLabel}
                               </ButtonLink>
                             </div>
                           </div>

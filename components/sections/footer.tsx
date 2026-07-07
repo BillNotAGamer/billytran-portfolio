@@ -1,9 +1,16 @@
-import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
+import { getPortfolioData, type Locale, type PortfolioData } from "@/data/portfolio";
 import { Container } from "@/components/ui/container";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
+import { resolveLocalizedHref } from "@/lib/routes";
 
-export function Footer({ data }: { data?: PortfolioData }) {
-  const portfolioData = data ?? getPortfolioData("en");
+export function Footer({
+  data,
+  locale = "en",
+}: {
+  data?: PortfolioData;
+  locale?: Locale;
+}) {
+  const portfolioData = data ?? getPortfolioData(locale);
 
   return (
     <footer className="border-t border-white/[0.06] py-8">
@@ -20,7 +27,7 @@ export function Footer({ data }: { data?: PortfolioData }) {
             {portfolioData.navigation.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
+                href={resolveLocalizedHref(locale, item.href)}
                 className="rounded-md transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {item.label}
@@ -32,4 +39,3 @@ export function Footer({ data }: { data?: PortfolioData }) {
     </footer>
   );
 }
-
