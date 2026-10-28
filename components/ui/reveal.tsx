@@ -1,57 +1,50 @@
-﻿"use client";
-
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
-import { useMotionReady } from "@/components/ui/use-motion-ready";
+﻿import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type RevealProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
+  /** Accepted for API compatibility; reveals are always once-only. */
   once?: boolean;
   y?: number;
 };
 
-const revealEase = [0.22, 1, 0.36, 1] as const;
+const DEFAULT_REVEAL_Y = 28;
 
+/**
+ * Server-rendered wrapper. The element is visible in the server HTML; the
+ * hidden-before-reveal state lives in globals.css and only applies once the
+ * inline bootstrap script has added `js` to <html> and the visitor has not
+ * asked for reduced motion. RevealObserver then marks elements as shown.
+ */
 export function Reveal({
   children,
   className,
   delay = 0,
-  once = true,
-  y = 28,
+  y = DEFAULT_REVEAL_Y,
 }: RevealProps) {
-  const { hasMounted, motionEnabled, prefersReducedMotion } = useMotionReady();
-  const hiddenState = { opacity: 0, y };
-  const visibleState = { opacity: 1, y: 0 };
+  const customProperties: Record<string, string> = {};
 
-  const motionProps = !hasMounted
-    ? {
-        initial: hiddenState,
-      }
-    : motionEnabled
-      ? {
-          initial: hiddenState,
-          whileInView: visibleState,
-          transition: {
-            delay,
-            duration: 0.7,
-            ease: revealEase,
-          },
-          viewport: { once, amount: 0.25 },
-        }
-      : {
-          initial: false,
-          animate: visibleState,
-          transition: {
-            duration: prefersReducedMotion ? 0.01 : 0.2,
-          },
-        };
+  if (delay > 0) {
+    customProperties["--reveal-delay"] = `${delay}s`;
+  }
+
+  if (y !== DEFAULT_REVEAL_Y) {
+    customProperties["--reveal-y"] = `${y}px`;
+  }
+
+  const hasCustomProperties = Object.keys(customProperties).length > 0;
 
   return (
-    <motion.div className={cn(className)} {...motionProps}>
+    <div
+      data-reveal=""
+      className={cn(className)}
+      style={
+        hasCustomProperties ? (customProperties as CSSProperties) : undefined
+      }
+    >
       {children}
-    </motion.div>
+    </div>
   );
 }

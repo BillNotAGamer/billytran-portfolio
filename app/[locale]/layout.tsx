@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
+import { RevealObserver } from "@/components/ui/reveal-observer";
 import { getSiteUrl } from "@/lib/site-url";
 import "../globals.css";
 
@@ -61,6 +62,22 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="h-full scroll-smooth antialiased">
       <body className="min-h-full bg-background font-sans text-foreground">
+        {/*
+          Marks the document as scripted before any body content is painted, so
+          the reveal styles can hide content only when they are able to reveal
+          it again. Inlined here rather than in <head> because the App Router
+          owns <head>; the stylesheet is already applied at this point, so there
+          is no flash either way.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
+        <noscript>
+          <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
+        <RevealObserver />
         <a
           href="#main-content"
           className="sr-only fixed left-4 top-4 z-[100] rounded-full border border-white/10 bg-background px-4 py-2 text-sm text-foreground shadow-lg focus:not-sr-only focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
