@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
 import { defaultLocale, isLocale } from "@/lib/locales";
+import { MotionRuntime } from "@/components/ui/motion-runtime";
 import { RevealObserver } from "@/components/ui/reveal-observer";
 import { SignatureSprite } from "@/components/ui/signature-sprite";
 import { SpotlightController } from "@/components/ui/spotlight-controller";
@@ -67,7 +68,7 @@ export default async function LocaleLayout({
   const locale = isLocale(localeParam) ? localeParam : defaultLocale;
 
   return (
-    <html lang={locale} className="h-full scroll-smooth antialiased">
+    <html lang={locale} className="h-full antialiased">
       <body className="min-h-full bg-background font-sans text-foreground">
         {/*
           Marks the document as scripted before any body content is painted, so
@@ -87,6 +88,7 @@ export default async function LocaleLayout({
         <SignatureSprite />
         <RevealObserver />
         <SpotlightController />
+        <MotionRuntime />
         <a
           href="#main-content"
           className="sr-only fixed left-4 top-4 z-[100] rounded-full border border-white/10 bg-background px-4 py-2 text-sm text-foreground shadow-lg focus:not-sr-only focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"

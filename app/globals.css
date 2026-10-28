@@ -268,6 +268,50 @@ textarea {
   animation-play-state: paused;
 }
 
+/*
+ * Scrolling. Lenis takes over only on the "full" tier; every other tier keeps
+ * native scrolling, smooth unless the visitor asked for reduced motion. The
+ * scroll-padding keeps a hash landing clear of the sticky header even when no
+ * JavaScript runs at all.
+ */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-offset);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Header scroll-progress bar. Stays invisible until GSAP drives it. */
+.scroll-progress {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Journey phase reached by the drawn connector line. */
+[data-journey-active] [data-journey-badge] {
+  border-color: rgb(141 224 255 / 0.55);
+  color: var(--accent);
+}
+
+[data-journey-active] [data-journey-card] {
+  border-color: rgb(141 224 255 / 0.22);
+}
+
 .text-balance {
   text-wrap: balance;
 }
@@ -283,7 +327,7 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
 
   *,
