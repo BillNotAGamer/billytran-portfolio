@@ -24,11 +24,11 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
               <SignatureBlueprint />
             </div>
 
-            <Reveal>
+            <Reveal immediate>
               <SectionPill>{portfolioData.hero.eyebrow}</SectionPill>
             </Reveal>
 
-            <Reveal delay={0.05}>
+            <Reveal delay={0.05} immediate>
               <ul className="mt-6 flex flex-wrap gap-3">
                 {portfolioData.about.roles.map((role) => (
                   <li key={role}>
@@ -38,7 +38,7 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
               </ul>
             </Reveal>
 
-            <Reveal delay={0.12}>
+            <Reveal delay={0.12} immediate>
               <h1
                 id="hero-title"
                 className="mt-8 max-w-4xl font-display text-5xl font-semibold tracking-[-0.055em] text-balance text-foreground sm:text-6xl lg:text-7xl xl:text-[5.8rem]"
@@ -51,13 +51,13 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
               </h1>
             </Reveal>
 
-            <Reveal delay={0.18}>
+            <Reveal delay={0.18} immediate>
               <p className="mt-6 max-w-2xl text-base leading-8 text-muted-strong sm:text-lg">
                 {portfolioData.hero.description}
               </p>
             </Reveal>
 
-            <Reveal delay={0.24} className="mt-8 flex flex-wrap gap-4">
+            <Reveal delay={0.24} immediate className="mt-8 flex flex-wrap gap-4">
               <ButtonLink href="#featured-projects" variant="primary">
                 {portfolioData.hero.primaryCta}
               </ButtonLink>
@@ -66,7 +66,7 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
               </ButtonLink>
             </Reveal>
 
-            <Reveal delay={0.28} className="mt-7">
+            <Reveal delay={0.28} immediate className="mt-7">
               <SectionPill caps={false} className="text-muted-strong" iconClassName="text-accent">
                 {portfolioData.hero.availability}
               </SectionPill>

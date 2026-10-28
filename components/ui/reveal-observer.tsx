@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 
-const REVEAL_SELECTOR = "[data-reveal]:not([data-reveal-shown])";
+// Only the observer-driven reveals; [data-reveal="immediate"] animates in CSS.
+const REVEAL_SELECTOR = '[data-reveal=""]:not([data-reveal-shown])';
 const REVEAL_THRESHOLD = 0.25;
 const SWEEP_DEBOUNCE_MS = 150;
 const SWEEP_TRIGGER_RATIO = 0.75;

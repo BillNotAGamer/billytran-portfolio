@@ -135,6 +135,28 @@ textarea {
       opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
       transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
   }
+
+  /*
+   * Above-the-fold reveals run from a CSS animation the moment they are
+   * parsed, instead of waiting for hydration to start the observer. Same
+   * motion, but the LCP element no longer sits behind the client bundle.
+   */
+  @keyframes reveal-rise {
+    from {
+      opacity: 0;
+      transform: translateY(var(--reveal-y, 28px));
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  html.js [data-reveal="immediate"] {
+    animation: reveal-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1)
+      var(--reveal-delay, 0s) both;
+  }
 }
 
 /*

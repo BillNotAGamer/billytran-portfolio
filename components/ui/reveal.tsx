@@ -5,6 +5,12 @@ type RevealProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
+  /**
+   * For content that is above the fold on load. Runs the same entrance from a
+   * CSS animation as soon as the element is parsed, rather than waiting for
+   * hydration to start the observer, which otherwise holds LCP back.
+   */
+  immediate?: boolean;
   /** Accepted for API compatibility; reveals are always once-only. */
   once?: boolean;
   y?: number;
@@ -22,6 +28,7 @@ export function Reveal({
   children,
   className,
   delay = 0,
+  immediate = false,
   y = DEFAULT_REVEAL_Y,
 }: RevealProps) {
   const customProperties: Record<string, string> = {};
@@ -38,7 +45,7 @@ export function Reveal({
 
   return (
     <div
-      data-reveal=""
+      data-reveal={immediate ? "immediate" : ""}
       className={cn(className)}
       style={
         hasCustomProperties ? (customProperties as CSSProperties) : undefined
