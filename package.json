@@ -10,7 +10,6 @@
     "check:contact-env": "node scripts/check-contact-env.mjs"
   },
   "dependencies": {
-    "framer-motion": "^12.38.0",
     "next": "16.4.3",
     "nodemailer": "^9.1.1",
     "react": "19.2.4",

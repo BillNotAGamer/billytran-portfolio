@@ -1,17 +1,41 @@
 ﻿"use client";
 
-import { useReducedMotion } from "framer-motion";
 import { useSyncExternalStore } from "react";
 
-const subscribe = () => () => {};
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+  mediaQuery.addEventListener("change", onStoreChange);
+
+  return () => mediaQuery.removeEventListener("change", onStoreChange);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function getReducedMotionServerSnapshot() {
+  return false;
+}
+
+const subscribeToMount = () => () => {};
 
 export function useMotionReady() {
-  const prefersReducedMotion = useReducedMotion();
-  const hasMounted = useSyncExternalStore(subscribe, () => true, () => false);
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot,
+  );
+  const hasMounted = useSyncExternalStore(
+    subscribeToMount,
+    () => true,
+    () => false,
+  );
 
   return {
     hasMounted,
     motionEnabled: hasMounted && !prefersReducedMotion,
-    prefersReducedMotion: hasMounted ? prefersReducedMotion : false,
+    prefersReducedMotion,
   };
 }

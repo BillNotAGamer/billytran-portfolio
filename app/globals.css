@@ -180,6 +180,59 @@ textarea {
   );
 }
 
+/*
+ * Hero orbit. Same periods, delays and easings the Framer Motion version used.
+ * Animations pause while the orbit is off-screen so nothing runs down the page.
+ */
+@keyframes hero-orbit-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.72;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes hero-orbit-rise {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(calc(-1 * var(--orbit-rise, 8px)));
+  }
+}
+
+.hero-orbit-glow {
+  animation: hero-orbit-glow 12s ease-in-out infinite;
+}
+
+.hero-orbit-card-float {
+  animation: hero-orbit-rise 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.hero-orbit-badge-float {
+  --orbit-rise: 12px;
+  animation: hero-orbit-rise var(--orbit-duration, 12s) ease-in-out
+    var(--orbit-delay, 0s) infinite;
+}
+
+.hero-orbit-tilt {
+  transform: perspective(1200px) rotateX(var(--orbit-rotate-x, 0deg))
+    rotateY(var(--orbit-rotate-y, 0deg));
+}
+
+[data-orbit-paused] .hero-orbit-glow,
+[data-orbit-paused] .hero-orbit-card-float,
+[data-orbit-paused] .hero-orbit-badge-float {
+  animation-play-state: paused;
+}
+
 .text-balance {
   text-wrap: balance;
 }
