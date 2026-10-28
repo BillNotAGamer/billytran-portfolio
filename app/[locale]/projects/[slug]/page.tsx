@@ -135,28 +135,28 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           <Container>
             <div className="grid gap-10 lg:grid-cols-[1.06fr_0.94fr] lg:items-start lg:gap-12">
               <div className="max-w-4xl">
-                <Reveal>
+                <Reveal immediate>
                   <SectionPill>{detail.eyebrow}</SectionPill>
                 </Reveal>
 
-                <Reveal delay={0.05} className="mt-6 flex flex-wrap gap-3">
+                <Reveal delay={0.05} immediate className="mt-6 flex flex-wrap gap-3">
                   <Tag accent>{project.category}</Tag>
                   <Tag>{project.impactLabel}</Tag>
                 </Reveal>
 
-                <Reveal delay={0.1}>
+                <Reveal delay={0.1} immediate>
                   <h1 className="mt-8 font-display text-5xl font-semibold tracking-[-0.05em] text-balance text-foreground sm:text-6xl lg:text-[4.4rem]">
                     {project.title}
                   </h1>
                 </Reveal>
 
-                <Reveal delay={0.16}>
+                <Reveal delay={0.16} immediate>
                   <p className="mt-6 max-w-3xl text-base leading-8 text-muted-strong sm:text-lg">
                     {project.description}
                   </p>
                 </Reveal>
 
-                <Reveal delay={0.22}>
+                <Reveal delay={0.22} immediate>
                   <ul className="mt-8 flex flex-wrap gap-3">
                     {project.stack.map((item) => (
                       <li key={item}>
@@ -166,7 +166,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                   </ul>
                 </Reveal>
 
-                <Reveal delay={0.28} className="mt-10 flex flex-wrap gap-4">
+                <Reveal delay={0.28} immediate className="mt-10 flex flex-wrap gap-4">
                   <ButtonLink href={backToProjectsHref} variant="secondary">
                     {detail.backLabel}
                   </ButtonLink>
