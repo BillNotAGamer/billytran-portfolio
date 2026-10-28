@@ -42,7 +42,16 @@ export function scrollProgress(gsap: Gsap) {
 }
 
 export function headingLines(gsap: Gsap, SplitText: SplitTextStatic) {
-  for (const heading of claim<HTMLElement>("[data-gsap='heading-title']")) {
+  for (const wrapper of claim<HTMLElement>("[data-gsap='heading-title']")) {
+    // Split the heading itself, never the Reveal wrapper: SplitText rebuilds
+    // its target's children, so pointing it at the wrapper would dismantle the
+    // <h2> and lose everything after the first line.
+    const heading = wrapper.querySelector<HTMLElement>("h2");
+
+    if (!heading) {
+      continue;
+    }
+
     // aria: "auto" copies the original text onto an aria-label, so the heading
     // keeps one accessible name and screen readers never read the split lines.
     // autoSplit re-splits on resize and re-runs onSplit.
