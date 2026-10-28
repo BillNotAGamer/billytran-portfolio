@@ -33,10 +33,14 @@ export function MotionRuntime() {
 
     // Landing on /en#journey: let the layout settle, then place the view with
     // the header offset applied. Only on first mount, never on route changes.
-    if (!hasHandledInitialHash.current && window.location.hash) {
+    const initialHash =
+      hasHandledInitialHash.current || !window.location.hash
+        ? ""
+        : window.location.hash;
+
+    if (initialHash) {
       hasHandledInitialHash.current = true;
-      const hash = window.location.hash;
-      requestAnimationFrame(() => scrollToHash(hash, { instant: true }));
+      requestAnimationFrame(() => scrollToHash(initialHash, { instant: true }));
     }
 
     let cancelled = false;
@@ -53,6 +57,15 @@ export function MotionRuntime() {
             }
 
             teardown = initMotion();
+
+            // Splitting headings and refreshing ScrollTrigger reflows the page,
+            // which loses a hash landing made moments earlier. Re-apply it once
+            // the scenes are in place, provided the reader has not moved on.
+            if (initialHash && window.location.hash === initialHash) {
+              requestAnimationFrame(() =>
+                scrollToHash(initialHash, { instant: true }),
+              );
+            }
           })
           .catch(() => {
             // Motion is an enhancement; the CSS reveals already cover the page.

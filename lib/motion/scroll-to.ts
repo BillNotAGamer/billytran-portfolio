@@ -109,6 +109,15 @@ export function handleAnchorClick(event: MouseEvent) {
 
   // Keep the URL in step without letting the browser jump to the target.
   if (window.location.hash !== hash) {
+    const previousUrl = window.location.href;
     window.history.pushState(null, "", hash);
+    // pushState fires nothing, so anything tracking the hash - the language
+    // switcher builds its target href from it - would otherwise go stale.
+    window.dispatchEvent(
+      new HashChangeEvent("hashchange", {
+        oldURL: previousUrl,
+        newURL: window.location.href,
+      }),
+    );
   }
 }
