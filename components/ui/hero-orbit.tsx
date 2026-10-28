@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import type { PortfolioData } from "@/data/portfolio";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
-import { useMotionReady } from "@/components/ui/use-motion-ready";
+import { useMotionTier } from "@/components/ui/use-motion-tier";
 
 const floatingCards = [
   {
@@ -41,7 +41,7 @@ const TILT_EASING = 0.14;
 const TILT_SETTLED_DEGREES = 0.01;
 
 export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
-  const { motionEnabled } = useMotionReady();
+  const { pointerMotionEnabled } = useMotionTier();
   const rootRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
   const targetTilt = useRef({ x: 0, y: 0 });
@@ -114,7 +114,7 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
   };
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (!motionEnabled || event.pointerType !== "mouse") {
+    if (!pointerMotionEnabled || event.pointerType !== "mouse") {
       return;
     }
 
