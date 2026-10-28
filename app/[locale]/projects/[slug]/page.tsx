@@ -406,25 +406,37 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           </div>
         </SiteSection>
 
-        <SiteSection id="project-gallery" labelledBy="project-gallery-title">
-          <SectionHeader
-            eyebrow={detail.eyebrow}
-            title={detail.galleryTitle}
-            titleId="project-gallery-title"
-          />
-          <Reveal className="mt-10">
-            <SpotlightPanel className="rounded-[32px]">
-              <div className="rounded-[32px] border border-dashed border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-10 text-center shadow-[0_30px_90px_-54px_rgba(0,0,0,0.92)] sm:p-14">
-                <p className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-                  {detail.galleryTitle}
-                </p>
-                <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-muted-strong">
-                  {detail.galleryNote}
-                </p>
-              </div>
-            </SpotlightPanel>
-          </Reveal>
-        </SiteSection>
+        {project.images.length > 0 ? (
+          <SiteSection id="project-gallery" labelledBy="project-gallery-title">
+            <SectionHeader
+              eyebrow={detail.eyebrow}
+              title={detail.galleryTitle}
+              titleId="project-gallery-title"
+            />
+            <ul className="mt-10 grid gap-6 lg:grid-cols-2">
+              {project.images.map((image, index) => (
+                <li key={image.src}>
+                  <Reveal delay={index * 0.06}>
+                    <SpotlightPanel className="rounded-[32px]">
+                      <div className="overflow-hidden rounded-[32px] border border-border bg-white/[0.03] shadow-[0_30px_90px_-54px_rgba(0,0,0,0.92)]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          width={image.width}
+                          height={image.height}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-auto w-full"
+                        />
+                      </div>
+                    </SpotlightPanel>
+                  </Reveal>
+                </li>
+              ))}
+            </ul>
+          </SiteSection>
+        ) : null}
 
         <SiteSection id="project-contact-cta" labelledBy="project-contact-cta-title">
           <Reveal>

@@ -20,6 +20,14 @@ export type ProjectDetailHighlight = {
   description: string;
 };
 
+/** Shape the planned screenshot upload feature will populate. */
+export type ProjectImage = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
 export type ProjectDetail = {
   eyebrow: string;
   overviewTitle: string;
@@ -37,7 +45,6 @@ export type ProjectDetail = {
   businessValue: string[];
   stackTitle: string;
   galleryTitle: string;
-  galleryNote: string;
   linksTitle: string;
   backLabel: string;
   contactCtaTitle: string;
@@ -55,6 +62,7 @@ export type Project = {
   category: string;
   description: string;
   features: string[];
+  images: ProjectImage[];
   impact: string;
   impactLabel: string;
   links: {
@@ -392,6 +400,7 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           "Separated selling charges, buying charges, and tax-sensitive records",
           "PostgreSQL-backed operational data with type-safe schema handling",
         ],
+        images: [],
         impactLabel: "Core Operations",
         impact: "Built as a production-oriented internal operations platform, it brings logistics workflows into a secure Next.js dashboard separating sales and accounting data.",
         stack: [
@@ -471,7 +480,6 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           ],
           stackTitle: "Tech Stack",
           galleryTitle: "Gallery",
-          galleryNote: "Real project screenshots will be added later.",
           linksTitle: "Project Links",
           backLabel: "Back to projects",
           contactCtaTitle: "Discuss a similar project",
@@ -502,6 +510,7 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           "Admin workflows for content, branches, menus, and bookings",
           "Cloudinary-backed media handling and booking email notifications",
         ],
+        images: [],
         impactLabel: "Business Digital Channel",
         impact: "Delivers a full web presence for a restaurant brand, combining table booking logic, email notifications, Cloudinary-powered media handling, and branch locators.",
         stack: [
@@ -585,7 +594,6 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           ],
           stackTitle: "Tech Stack",
           galleryTitle: "Gallery",
-          galleryNote: "Real project screenshots will be added later.",
           linksTitle: "Project Links",
           backLabel: "Back to projects",
           contactCtaTitle: "Discuss a similar project",
@@ -616,6 +624,7 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           "JWT token storage, expiry checks, and authenticated requests",
           "Lightweight portal architecture with Vercel rewrite routing",
         ],
+        images: [],
         impactLabel: "Self-Service Integration",
         impact: "UniWave Customer Portal focuses on lightweight, practical client-side delivery. It combines a custom translation engine, REST API calls, Vercel rewrites, and JWT handling.",
         stack: [
@@ -699,7 +708,6 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           ],
           stackTitle: "Tech Stack",
           galleryTitle: "Gallery",
-          galleryNote: "Real project screenshots will be added later.",
           linksTitle: "Project Links",
           backLabel: "Back to projects",
           contactCtaTitle: "Discuss a similar project",
@@ -1057,6 +1065,7 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           "Tách selling charges, buying charges và dữ liệu nhạy cảm về thuế",
           "Dữ liệu vận hành lưu trên PostgreSQL với schema type-safe",
         ],
+        images: [],
         impactLabel: "Vận hành Cốt lõi",
         impact: "Được xây dựng như một nền tảng nội bộ thực tế, dự án đưa toàn bộ quy trình logistics vào một dashboard Next.js an toàn, phân tách rõ ràng dữ liệu kinh doanh và kế toán.",
         stack: [
@@ -1136,7 +1145,6 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           ],
           stackTitle: "Công nghệ sử dụng",
           galleryTitle: "Hình ảnh dự án",
-          galleryNote: "Hình ảnh thực tế của dự án sẽ được bổ sung sau.",
           linksTitle: "Liên kết dự án",
           backLabel: "Quay lại danh sách dự án",
           contactCtaTitle: "Trao đổi về dự án tương tự",
@@ -1167,6 +1175,7 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           "Workflow admin cho nội dung, chi nhánh, menu và booking",
           "Xử lý media qua Cloudinary và email booking tự động",
         ],
+        images: [],
         impactLabel: "Kênh Số Doanh nghiệp",
         impact: "Cung cấp sự hiện diện số toàn diện cho chuỗi nhà hàng ẩm thực Hàn Quốc, tích hợp logic đặt bàn, thông báo email, xử lý hình ảnh Cloudinary và tìm kiếm chi nhánh.",
         stack: [
@@ -1250,7 +1259,6 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           ],
           stackTitle: "Công nghệ sử dụng",
           galleryTitle: "Hình ảnh dự án",
-          galleryNote: "Hình ảnh thực tế của dự án sẽ được bổ sung sau.",
           linksTitle: "Liên kết dự án",
           backLabel: "Quay lại danh sách dự án",
           contactCtaTitle: "Trao đổi về dự án tương tự",
@@ -1281,6 +1289,7 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           "Lưu JWT, kiểm tra hết hạn và request có xác thực",
           "Portal gọn nhẹ với định tuyến rewrite trên Vercel",
         ],
+        images: [],
         impactLabel: "Tích hợp Tự phục vụ",
         impact: "UniWave Customer Portal tập trung vào việc triển khai phía client gọn nhẹ và hiệu quả. Dự án kết hợp bộ dịch ngôn ngữ tùy biến, kết nối REST API, định tuyến Vercel và quản lý phiên JWT.",
         stack: [
@@ -1364,7 +1373,6 @@ export const portfolioContent: Record<Locale, PortfolioData> = {
           ],
           stackTitle: "Công nghệ sử dụng",
           galleryTitle: "Hình ảnh dự án",
-          galleryNote: "Hình ảnh thực tế của dự án sẽ được bổ sung sau.",
           linksTitle: "Liên kết dự án",
           backLabel: "Quay lại danh sách dự án",
           contactCtaTitle: "Trao đổi về dự án tương tự",
