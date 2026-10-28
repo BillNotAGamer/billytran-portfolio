@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
+import { getSiteUrl } from "@/lib/site-url";
 import "../globals.css";
 
 type Props = {
@@ -11,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = getPortfolioData(locale as Locale);
 
   return {
+    metadataBase: new URL(getSiteUrl()),
     title: {
       default: data.metadata.title,
       template: `%s | ${data.header.brandName}`,
