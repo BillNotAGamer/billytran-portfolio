@@ -1,8 +1,20 @@
 import nodemailer from "nodemailer";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
 import { validateContactFormSubmission } from "@/lib/contact-form";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const runtime = "nodejs";
+
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+
+/**
+ * Best-effort only. This Map lives in the memory of a single serverless
+ * instance, so on Vercel every instance keeps its own counters and the limit is
+ * not enforced globally; a burst spread across cold starts can exceed it. A
+ * shared store such as Upstash Redis or Vercel KV is the long-term fix.
+ */
+const rateLimitBuckets = new Map<string, number[]>();
 
 type ContactApiResponse = {
   ok: boolean;
@@ -172,7 +184,117 @@ function getLocaleLabel(locale: Locale) {
   return locale === "vi" ? "Vietnamese (/vi)" : "English (/en)";
 }
 
+function isLocalhostHost(host: string) {
+  const hostname = host.split(":")[0];
+
+  return (
+    hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]"
+  );
+}
+
+function getAllowedHosts(request: Request) {
+  const allowedHosts = new Set<string>();
+
+  for (const headerName of ["x-forwarded-host", "host"]) {
+    const value = request.headers.get(headerName)?.trim().toLowerCase();
+
+    if (value) {
+      allowedHosts.add(value);
+    }
+  }
+
+  try {
+    allowedHosts.add(new URL(getSiteUrl()).host.toLowerCase());
+  } catch {
+    // getSiteUrl() is always parseable; guarded only so a bad env value cannot
+    // take the whole route down.
+  }
+
+  return allowedHosts;
+}
+
+function isSameOriginRequest(request: Request) {
+  const declaredOrigin =
+    request.headers.get("origin") ?? request.headers.get("referer");
+
+  if (!declaredOrigin) {
+    return false;
+  }
+
+  let originHost: string;
+
+  try {
+    originHost = new URL(declaredOrigin).host.toLowerCase();
+  } catch {
+    return false;
+  }
+
+  if (getAllowedHosts(request).has(originHost)) {
+    return true;
+  }
+
+  return process.env.NODE_ENV !== "production" && isLocalhostHost(originHost);
+}
+
+function getClientIp(request: Request) {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const firstForwardedAddress = forwardedFor?.split(",")[0]?.trim();
+
+  if (firstForwardedAddress) {
+    return firstForwardedAddress;
+  }
+
+  return request.headers.get("x-real-ip")?.trim() || "unknown";
+}
+
+function registerRequestAndCheckRateLimit(clientIp: string) {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+  for (const [ip, timestamps] of rateLimitBuckets) {
+    const recentTimestamps = timestamps.filter(
+      (timestamp) => timestamp > windowStart,
+    );
+
+    if (recentTimestamps.length === 0) {
+      rateLimitBuckets.delete(ip);
+    } else {
+      rateLimitBuckets.set(ip, recentTimestamps);
+    }
+  }
+
+  const timestamps = rateLimitBuckets.get(clientIp) ?? [];
+
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  rateLimitBuckets.set(clientIp, [...timestamps, now]);
+
+  return false;
+}
+
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return jsonResponse(
+      {
+        ok: false,
+        message: getLocalizedResponse("en").errorMessage,
+      },
+      403,
+    );
+  }
+
+  if (registerRequestAndCheckRateLimit(getClientIp(request))) {
+    return jsonResponse(
+      {
+        ok: false,
+        message: getLocalizedResponse("en").errorMessage,
+      },
+      429,
+    );
+  }
+
   let rawBody: unknown;
 
   try {
