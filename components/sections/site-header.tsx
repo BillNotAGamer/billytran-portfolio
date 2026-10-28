@@ -19,6 +19,11 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-background/68 backdrop-blur-xl">
+      <div
+        aria-hidden="true"
+        data-scroll-progress
+        className="scroll-progress absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,rgba(141,224,255,0.9),rgba(121,161,255,0.9),rgba(220,180,123,0.9))]"
+      />
       <Container>
         <div className="flex items-center justify-between gap-6 py-4">
           <a

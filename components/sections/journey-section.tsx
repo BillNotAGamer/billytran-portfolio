@@ -15,14 +15,19 @@ export function JourneySection({ data: portfolioData }: { data: PortfolioData })
         titleId="journey-title"
       />
 
-      <ol className="relative mt-14 space-y-6 before:absolute before:bottom-0 before:left-[1.1rem] before:top-0 before:w-px before:bg-[linear-gradient(180deg,rgba(141,224,255,0.35),transparent_95%)] sm:before:left-[7.5rem]">
+      <ol data-journey-list className="relative mt-14 space-y-6">
+        <span
+          aria-hidden="true"
+          data-journey-line
+          className="absolute bottom-0 left-[1.1rem] top-0 w-px bg-[linear-gradient(180deg,rgba(141,224,255,0.35),transparent_95%)] sm:left-[7.5rem]"
+        />
         {portfolioData.journey.map((item, index) => {
           const itemTitleId = `journey-item-${item.phase}`;
 
           return (
-            <li key={item.phase} className="grid gap-4 sm:grid-cols-[6rem_1fr] sm:gap-6">
+            <li key={item.phase} data-journey-item className="grid gap-4 sm:grid-cols-[6rem_1fr] sm:gap-6">
               <div className="relative z-10 flex items-start sm:justify-end">
-                <span className="inline-flex h-9 items-center rounded-full border border-accent/20 bg-background px-4 text-xs font-medium uppercase tracking-[0.24em] text-accent">
+                <span data-journey-badge className="inline-flex h-9 items-center rounded-full border border-accent/20 bg-background px-4 text-xs font-medium uppercase tracking-[0.24em] text-accent transition-colors duration-500">
                   {item.phase}
                 </span>
               </div>
@@ -31,7 +36,8 @@ export function JourneySection({ data: portfolioData }: { data: PortfolioData })
                 <SpotlightPanel className="rounded-[28px]">
                   <article
                     aria-labelledby={itemTitleId}
-                    className="rounded-[28px] border border-border bg-white/[0.03] p-6 sm:p-7"
+                    data-journey-card
+                    className="rounded-[28px] border border-border bg-white/[0.03] p-6 sm:p-7 transition-colors duration-500"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>

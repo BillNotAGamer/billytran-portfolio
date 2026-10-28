@@ -53,6 +53,8 @@ export function ButtonLink({
     className,
   );
 
+  const magneticProps = variant === "primary" ? { "data-magnetic": "" } : {};
+
   if (isExternal) {
     return (
       <a
@@ -60,6 +62,7 @@ export function ButtonLink({
         target={target}
         rel={resolvedRel}
         className={baseClassName}
+        {...magneticProps}
         {...props}
       >
         <ButtonContent>{children}</ButtonContent>
@@ -68,7 +71,7 @@ export function ButtonLink({
   }
 
   return (
-    <Link href={href} className={baseClassName} {...props}>
+    <Link href={href} className={baseClassName} {...magneticProps} {...props}>
       <ButtonContent>{children}</ButtonContent>
     </Link>
   );

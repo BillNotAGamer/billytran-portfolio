@@ -11,6 +11,11 @@ type RevealProps = {
    * hydration to start the observer, which otherwise holds LCP back.
    */
   immediate?: boolean;
+  /**
+   * Marks the wrapper for GSAP to claim on the "full" tier. GSAP removes
+   * data-reveal from it, so the two systems never animate the same element.
+   */
+  gsapKey?: string;
   /** Accepted for API compatibility; reveals are always once-only. */
   once?: boolean;
   y?: number;
@@ -28,6 +33,7 @@ export function Reveal({
   children,
   className,
   delay = 0,
+  gsapKey,
   immediate = false,
   y = DEFAULT_REVEAL_Y,
 }: RevealProps) {
@@ -46,6 +52,7 @@ export function Reveal({
   return (
     <div
       data-reveal={immediate ? "immediate" : ""}
+      data-gsap={gsapKey}
       className={cn(className)}
       style={
         hasCustomProperties ? (customProperties as CSSProperties) : undefined

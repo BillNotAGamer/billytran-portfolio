@@ -19,7 +19,7 @@ export function TechStackSection({ data: portfolioData }: { data: PortfolioData 
       <ul className="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {portfolioData.techGroups.map((group, index) => (
           <li key={group.title}>
-            <Reveal delay={index * 0.05}>
+            <Reveal delay={index * 0.05} gsapKey="tech-card">
               <SpotlightPanel className="rounded-[28px]">
                 <article className="rounded-[28px] border border-border bg-white/[0.03] p-6 shadow-[0_28px_80px_-52px_rgba(0,0,0,0.8)]">
                   <div className="h-px w-full bg-[linear-gradient(90deg,rgba(141,224,255,0.35),transparent)]" />
@@ -35,7 +35,7 @@ export function TechStackSection({ data: portfolioData }: { data: PortfolioData 
 
                   <ul className="mt-6 flex flex-wrap gap-3">
                     {group.items.map((item) => (
-                      <li key={item}>
+                      <li key={item} data-tech-item>
                         <Tag>{item}</Tag>
                       </li>
                     ))}

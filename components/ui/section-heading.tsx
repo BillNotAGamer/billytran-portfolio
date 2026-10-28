@@ -29,12 +29,12 @@ export function SectionHeading({
         className,
       )}
     >
-      <Reveal>
+      <Reveal gsapKey="heading-pill">
         <SectionPill className={centered ? "justify-center" : undefined}>
           {eyebrow}
         </SectionPill>
       </Reveal>
-      <Reveal delay={0.05}>
+      <Reveal delay={0.05} gsapKey="heading-title">
         <h2
           id={titleId}
           className="font-display text-4xl font-semibold tracking-[-0.04em] text-balance text-foreground sm:text-5xl lg:text-[3.5rem]"
@@ -42,7 +42,7 @@ export function SectionHeading({
           {title}
         </h2>
       </Reveal>
-      <Reveal delay={0.1}>
+      <Reveal delay={0.1} gsapKey="heading-copy">
         <p className="max-w-2xl text-base leading-8 text-muted-strong sm:text-lg">
           {description}
         </p>

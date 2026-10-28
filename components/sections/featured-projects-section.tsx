@@ -41,7 +41,7 @@ export function FeaturedProjectsSection({
               key={project.title}
               className={index === 0 ? "lg:col-span-2" : undefined}
             >
-              <Reveal delay={index * 0.08}>
+              <Reveal delay={index * 0.08} gsapKey="project-card">
                 <SpotlightPanel className="rounded-[32px]" spotlight>
                   <article
                     aria-labelledby={projectTitleId}
@@ -90,7 +90,10 @@ export function FeaturedProjectsSection({
                         </div>
 
                         <SpotlightPanel className="rounded-[24px]" lift={false}>
-                          <div className="flex h-full flex-col justify-between rounded-[24px] border border-white/8 bg-white/[0.03] p-6">
+                          <div
+                            data-project-media
+                            className="flex h-full flex-col justify-between rounded-[24px] border border-white/8 bg-white/[0.03] p-6"
+                          >
                             <div>
                               <div className="h-px w-12 bg-[linear-gradient(90deg,rgba(141,224,255,0.65),transparent)]" />
                               <p className="mt-4 text-lg leading-8 text-foreground">
