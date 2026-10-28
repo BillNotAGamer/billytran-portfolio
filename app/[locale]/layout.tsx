@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
 import { RevealObserver } from "@/components/ui/reveal-observer";
+import { SignatureSprite } from "@/components/ui/signature-sprite";
 import { SpotlightController } from "@/components/ui/spotlight-controller";
 import { getSiteUrl } from "@/lib/site-url";
 import "../globals.css";
@@ -78,6 +79,7 @@ export default async function LocaleLayout({
         <noscript>
           <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
         </noscript>
+        <SignatureSprite />
         <RevealObserver />
         <SpotlightController />
         <a

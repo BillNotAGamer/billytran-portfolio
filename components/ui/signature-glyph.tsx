@@ -1,4 +1,5 @@
-﻿import { cn } from "@/lib/utils";
+﻿import { SIGNATURE_GLYPH_SYMBOL_ID } from "@/components/ui/signature-sprite";
+import { cn } from "@/lib/utils";
 
 type SignatureGlyphProps = {
   className?: string;
@@ -31,22 +32,12 @@ export function SignatureGlyph({
       )}
     >
       <span className="absolute inset-[18%] rounded-[0.8rem] border border-white/7" />
-      <svg viewBox="0 0 52 52" fill="none" className="relative z-10 h-[62%] w-[62%]">
-        <path
-          d="M10 36H20C28 36 32 32 32 24V10"
-          stroke="currentColor"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-          opacity="0.95"
-        />
-        <path
-          d="M18 42H30C38 42 42 38 42 30V10"
-          stroke="currentColor"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-          opacity="0.55"
-        />
-        <circle cx="32" cy="10" r="3.2" fill="currentColor" opacity="0.95" />
+      <svg
+        viewBox="0 0 52 52"
+        fill="none"
+        className="relative z-10 h-[62%] w-[62%]"
+      >
+        <use href={`#${SIGNATURE_GLYPH_SYMBOL_ID}`} />
       </svg>
     </span>
   );
