@@ -1,4 +1,4 @@
-﻿import { SignatureBlueprint } from "@/components/ui/signature-blueprint";
+import { SignatureBlueprint } from "@/components/ui/signature-blueprint";
 
 export function SiteBackdrop() {
   return (

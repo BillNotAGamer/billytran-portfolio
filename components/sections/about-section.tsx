@@ -1,4 +1,4 @@
-import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
+import type { PortfolioData } from "@/data/portfolio";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
@@ -6,9 +6,7 @@ import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
 
-export function AboutSection({ data }: { data?: PortfolioData }) {
-  const portfolioData = data ?? getPortfolioData("en");
-
+export function AboutSection({ data: portfolioData }: { data: PortfolioData }) {
   return (
     <SiteSection id="about" labelledBy="about-title">
       <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">

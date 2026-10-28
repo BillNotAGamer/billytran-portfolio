@@ -1,4 +1,4 @@
-import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
+import type { PortfolioData } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { HeroOrbit } from "@/components/ui/hero-orbit";
 import { Reveal } from "@/components/ui/reveal";
@@ -9,9 +9,7 @@ import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
 import { Container } from "@/components/ui/container";
 
-export function HeroSection({ data }: { data?: PortfolioData }) {
-  const portfolioData = data ?? getPortfolioData("en");
-
+export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
   return (
     <section
       id="top"

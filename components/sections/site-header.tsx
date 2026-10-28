@@ -1,4 +1,4 @@
-import { getPortfolioData, type PortfolioData, type Locale } from "@/data/portfolio";
+import type { PortfolioData, Locale } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/ui/container";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
@@ -8,8 +8,13 @@ import { getLocalePath, resolveLocalizedHref } from "@/lib/routes";
 const navLinkClassName =
   "group relative rounded-full text-sm text-muted transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-export function SiteHeader({ data, locale = "en" }: { data?: PortfolioData; locale?: Locale }) {
-  const portfolioData = data ?? getPortfolioData(locale);
+export function SiteHeader({
+  data: portfolioData,
+  locale,
+}: {
+  data: PortfolioData;
+  locale: Locale;
+}) {
   const homeHref = getLocalePath(locale);
 
   return (

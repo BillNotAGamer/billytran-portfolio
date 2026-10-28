@@ -1,4 +1,4 @@
-﻿import { Reveal } from "@/components/ui/reveal";
+import { Reveal } from "@/components/ui/reveal";
 import { SectionPill } from "@/components/ui/section-pill";
 import { cn } from "@/lib/utils";
 

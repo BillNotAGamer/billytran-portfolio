@@ -1,4 +1,4 @@
-﻿import { SIGNATURE_GLYPH_SYMBOL_ID } from "@/components/ui/signature-sprite";
+import { SIGNATURE_GLYPH_SYMBOL_ID } from "@/components/ui/signature-sprite";
 import { cn } from "@/lib/utils";
 
 type SignatureGlyphProps = {

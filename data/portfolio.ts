@@ -1,4 +1,6 @@
-export type Locale = "en" | "vi";
+import { defaultLocale, isLocale, type Locale, locales } from "@/lib/locales";
+
+export { defaultLocale, isLocale, locales, type Locale };
 
 export type NavigationItem = {
   href: string;
@@ -217,10 +219,6 @@ export type PortfolioData = {
     note: string;
   };
 };
-
-export const locales = ["en", "vi"] as const;
-
-export const defaultLocale: Locale = "en";
 
 export const portfolioContent: Record<Locale, PortfolioData> = {
   en: {
@@ -1559,9 +1557,6 @@ export function getPortfolioData(locale: Locale = defaultLocale): PortfolioData 
   return portfolioContent[locale] ?? portfolioContent[defaultLocale];
 }
 
-export function isLocale(value: string): value is Locale {
-  return value === "en" || value === "vi";
-}
 
 export function getProjectBySlug(
   locale: Locale,

@@ -1,4 +1,4 @@
-import { getPortfolioData, type Locale, type PortfolioData } from "@/data/portfolio";
+import type { Locale, PortfolioData } from "@/data/portfolio";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -10,14 +10,12 @@ import { Tag } from "@/components/ui/tag";
 import { getProjectPath, resolveLocalizedHref } from "@/lib/routes";
 
 export function FeaturedProjectsSection({
-  data,
-  locale = "en",
+  data: portfolioData,
+  locale,
 }: {
-  data?: PortfolioData;
-  locale?: Locale;
+  data: PortfolioData;
+  locale: Locale;
 }) {
-  const portfolioData = data ?? getPortfolioData(locale);
-
   return (
     <SiteSection id="featured-projects" labelledBy="featured-projects-title">
       <div className="relative">

@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { cn } from "@/lib/utils";

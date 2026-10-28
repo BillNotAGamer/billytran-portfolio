@@ -6,17 +6,15 @@ import { SignatureBlueprint } from "@/components/ui/signature-blueprint";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
-import { getPortfolioData, type Locale, type PortfolioData } from "@/data/portfolio";
+import type { Locale, PortfolioData } from "@/data/portfolio";
 
 export function ContactSection({
-  data,
-  locale = "en",
+  data: portfolioData,
+  locale,
 }: {
-  data?: PortfolioData;
-  locale?: Locale;
+  data: PortfolioData;
+  locale: Locale;
 }) {
-  const portfolioData = data ?? getPortfolioData(locale);
-
   return (
     <SiteSection id="contact" labelledBy="contact-title">
       <SpotlightPanel className="rounded-[36px]">

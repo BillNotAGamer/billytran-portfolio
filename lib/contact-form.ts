@@ -1,4 +1,4 @@
-import type { Locale } from "@/data/portfolio";
+import { isLocale, type Locale } from "@/lib/locales";
 
 export const CONTACT_FORM_LIMITS = {
   name: 100,
@@ -59,9 +59,6 @@ type ValidationResult = {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function isLocale(value: unknown): value is Locale {
-  return value === "en" || value === "vi";
-}
 
 function asRecord(value: unknown): Record<string, unknown> {
   return typeof value === "object" && value !== null

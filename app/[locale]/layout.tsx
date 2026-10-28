@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
+import { defaultLocale, isLocale } from "@/lib/locales";
 import { RevealObserver } from "@/components/ui/reveal-observer";
 import { SignatureSprite } from "@/components/ui/signature-sprite";
 import { SpotlightController } from "@/components/ui/spotlight-controller";
@@ -60,7 +61,11 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const { locale: localeParam } = await params;
+  // The layout renders before the page can redirect an unknown segment, so
+  // lang is only ever set from a locale we actually ship.
+  const locale = isLocale(localeParam) ? localeParam : defaultLocale;
+
   return (
     <html lang={locale} className="h-full scroll-smooth antialiased">
       <body className="min-h-full bg-background font-sans text-foreground">

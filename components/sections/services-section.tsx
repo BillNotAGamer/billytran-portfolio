@@ -1,13 +1,11 @@
-import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
+import type { PortfolioData } from "@/data/portfolio";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { SiteSection } from "@/components/ui/site-section";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 
-export function ServicesSection({ data }: { data?: PortfolioData }) {
-  const portfolioData = data ?? getPortfolioData("en");
-
+export function ServicesSection({ data: portfolioData }: { data: PortfolioData }) {
   return (
     <SiteSection id="services" labelledBy="services-title">
       <SectionHeading

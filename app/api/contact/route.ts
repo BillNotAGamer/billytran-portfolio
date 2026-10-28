@@ -37,6 +37,9 @@ type SmtpConfigResolution = {
   invalid: string[];
 };
 
+// TODO(Q-03): drop this fallback and fail loudly when CONTACT_TO_EMAIL is
+// unset, so a misconfigured deployment cannot silently mail a hardcoded
+// address. Also duplicated in scripts/check-contact-env.mjs.
 const DEFAULT_CONTACT_TO_EMAIL = "tranbao64416@gmail.com";
 
 function getLocalizedResponse(locale: Locale) {

@@ -1,17 +1,15 @@
-import { getPortfolioData, type Locale, type PortfolioData } from "@/data/portfolio";
+import type { Locale, PortfolioData } from "@/data/portfolio";
 import { Container } from "@/components/ui/container";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { resolveLocalizedHref } from "@/lib/routes";
 
 export function Footer({
-  data,
-  locale = "en",
+  data: portfolioData,
+  locale,
 }: {
-  data?: PortfolioData;
-  locale?: Locale;
+  data: PortfolioData;
+  locale: Locale;
 }) {
-  const portfolioData = data ?? getPortfolioData(locale);
-
   return (
     <footer className="border-t border-white/[0.06] py-8">
       <Container>

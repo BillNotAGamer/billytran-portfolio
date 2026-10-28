@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { cn } from "@/lib/utils";
 

@@ -1,4 +1,4 @@
-import type { Locale } from "@/data/portfolio";
+import type { Locale } from "@/lib/locales";
 
 export function getLocalePath(locale: Locale) {
   return `/${locale}`;

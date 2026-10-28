@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { CSSProperties, PointerEvent } from "react";
-import { getPortfolioData, type PortfolioData } from "@/data/portfolio";
+import type { PortfolioData } from "@/data/portfolio";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { useMotionReady } from "@/components/ui/use-motion-ready";
 
@@ -40,8 +40,7 @@ const MAX_TILT_DEGREES = 7;
 const TILT_EASING = 0.14;
 const TILT_SETTLED_DEGREES = 0.01;
 
-export function HeroOrbit({ data }: { data?: PortfolioData }) {
-  const portfolioData = data ?? getPortfolioData("en");
+export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
   const { motionEnabled } = useMotionReady();
   const rootRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
