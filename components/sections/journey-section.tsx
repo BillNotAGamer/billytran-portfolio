@@ -17,7 +17,7 @@ export function JourneySection({ data }: { data?: PortfolioData }) {
         titleId="journey-title"
       />
 
-      <ol className="relative mt-14 space-y-6 before:absolute before:bottom-0 before:left-[1.1rem] before:top-0 before:w-px before:bg-[linear-gradient(180deg,rgba(141,224,255,0.35),transparent 95%)] sm:before:left-[7.5rem]">
+      <ol className="relative mt-14 space-y-6 before:absolute before:bottom-0 before:left-[1.1rem] before:top-0 before:w-px before:bg-[linear-gradient(180deg,rgba(141,224,255,0.35),transparent_95%)] sm:before:left-[7.5rem]">
         {portfolioData.journey.map((item, index) => {
           const itemTitleId = `journey-item-${item.phase}`;
 
