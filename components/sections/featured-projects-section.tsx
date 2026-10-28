@@ -44,7 +44,7 @@ export function FeaturedProjectsSection({
               className={index === 0 ? "lg:col-span-2" : undefined}
             >
               <Reveal delay={index * 0.08}>
-                <SpotlightPanel className="rounded-[32px]">
+                <SpotlightPanel className="rounded-[32px]" spotlight>
                   <article
                     aria-labelledby={projectTitleId}
                     className="group relative h-full overflow-hidden rounded-[32px] border border-border bg-white/[0.03] p-[1px] shadow-[0_32px_90px_-44px_rgba(0,0,0,0.88)] transition-transform duration-500"

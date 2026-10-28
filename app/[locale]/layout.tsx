@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { getPortfolioData, type Locale } from "@/data/portfolio";
 import { RevealObserver } from "@/components/ui/reveal-observer";
+import { SpotlightController } from "@/components/ui/spotlight-controller";
 import { getSiteUrl } from "@/lib/site-url";
 import "../globals.css";
 
@@ -78,6 +79,7 @@ export default async function LocaleLayout({
           <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
         </noscript>
         <RevealObserver />
+        <SpotlightController />
         <a
           href="#main-content"
           className="sr-only fixed left-4 top-4 z-[100] rounded-full border border-white/10 bg-background px-4 py-2 text-sm text-foreground shadow-lg focus:not-sr-only focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"

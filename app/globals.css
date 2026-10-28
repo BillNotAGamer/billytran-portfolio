@@ -137,6 +137,49 @@ textarea {
   }
 }
 
+/*
+ * Pointer spotlight. The gradient is a fixed 760px blob (2 x the original
+ * 380px radius) on its own clipped layer, moved with translate3d only, so a
+ * pointer move never repaints the panel background. --spotlight-x/y are set by
+ * SpotlightController as an offset from the panel centre, which means the
+ * default of 0 is a centred glow for reduced-motion and no-JS visitors.
+ */
+.spotlight-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover > .spotlight-layer,
+.group:focus-within > .spotlight-layer {
+  opacity: 1;
+}
+
+.spotlight-layer::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 760px;
+  height: 760px;
+  margin: -380px 0 0 -380px;
+  background: radial-gradient(
+    circle closest-side,
+    rgba(141, 224, 255, 0.16),
+    rgba(121, 161, 255, 0.08) 18%,
+    transparent 62%
+  );
+  transform: translate3d(
+    var(--spotlight-x, 0px),
+    var(--spotlight-y, 0px),
+    0
+  );
+}
+
 .text-balance {
   text-wrap: balance;
 }

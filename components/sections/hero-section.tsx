@@ -88,7 +88,7 @@ export function HeroSection({ data }: { data?: PortfolioData }) {
             <dl className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {portfolioData.heroMetrics.map((item, index) => (
                 <Reveal key={item.label} delay={0.4 + index * 0.06}>
-                  <SpotlightPanel className="rounded-[24px]">
+                  <SpotlightPanel className="rounded-[24px]" spotlight>
                     <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 backdrop-blur-sm">
                       <dt className="flex items-center justify-between gap-4 text-sm uppercase tracking-[0.22em] text-muted">
                         <span>{item.label}</span>
