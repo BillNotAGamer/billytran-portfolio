@@ -1,0 +1,194 @@
+import {
+  Box3,
+  CubicBezierCurve3,
+  CurvePath,
+  LineCurve3,
+  SphereGeometry,
+  TorusGeometry,
+  TubeGeometry,
+  Vector3,
+} from "three";
+
+import { HERO_MARK_CONFIG } from "@/lib/three/hero-mark-config";
+
+/**
+ * Procedural geometry for the 3D signature mark.
+ *
+ * The numbers below are transcribed from the `signature-blueprint` symbol in
+ * components/ui/signature-sprite.tsx, so the 3D mark and the static SVG
+ * fallback are the same drawing. Nothing is loaded from a file.
+ */
+
+const SVG_HALF = 640 / 2;
+
+type Point = readonly [number, number];
+
+/** SVG user units to world units. y flips, because SVG counts downwards. */
+function toWorld([x, y]: Point, z: number) {
+  return new Vector3((x - SVG_HALF) / SVG_HALF, (SVG_HALF - y) / SVG_HALF, z);
+}
+
+/**
+ * One signature stroke: a horizontal run, a cubic corner, then a vertical run up
+ * to its node. The primary stroke is the SVG path
+ * "M118 438H262C382 438 440 380 440 260V94".
+ */
+type StrokeSpec = {
+  start: Point;
+  corner: Point;
+  control1: Point;
+  control2: Point;
+  cornerEnd: Point;
+  end: Point;
+};
+
+const PRIMARY_STROKE: StrokeSpec = {
+  start: [118, 438],
+  corner: [262, 438],
+  control1: [382, 438],
+  control2: [440, 380],
+  cornerEnd: [440, 260],
+  end: [440, 94],
+};
+
+/** "M206 546H354C484 546 546 484 546 354V94". */
+const SECONDARY_STROKE: StrokeSpec = {
+  start: [206, 546],
+  corner: [354, 546],
+  control1: [484, 546],
+  control2: [546, 484],
+  cornerEnd: [546, 354],
+  end: [546, 94],
+};
+
+/** The two circles: r=24 at (440, 94) and r=16 at (546, 94). */
+const PRIMARY_NODE: Point = [440, 94];
+const SECONDARY_NODE: Point = [546, 94];
+
+function buildStroke(spec: StrokeSpec, z: number) {
+  const { tubeRadius, tubeSegments, tubeRadialSegments } =
+    HERO_MARK_CONFIG.geometry;
+
+  const corner = toWorld(spec.corner, z);
+  const cornerEnd = toWorld(spec.cornerEnd, z);
+
+  // CurvePath.getPoint walks the segments by arc length, so TubeGeometry spaces
+  // its rings evenly along the whole stroke rather than per segment.
+  const path = new CurvePath<Vector3>();
+  path.add(new LineCurve3(toWorld(spec.start, z), corner));
+  path.add(
+    new CubicBezierCurve3(
+      corner,
+      toWorld(spec.control1, z),
+      toWorld(spec.control2, z),
+      cornerEnd,
+    ),
+  );
+  path.add(new LineCurve3(cornerEnd, toWorld(spec.end, z)));
+
+  return new TubeGeometry(
+    path,
+    tubeSegments,
+    tubeRadius,
+    tubeRadialSegments,
+    false,
+  );
+}
+
+export type HeroMarkGeometry = {
+  primaryStroke: TubeGeometry;
+  secondaryStroke: TubeGeometry;
+  /**
+   * TubeGeometry is open at both ends. This sphere is instanced at every free
+   * end to reproduce the SVG stroke-linecap="round"; ends that a node covers do
+   * not get one.
+   */
+  cap: SphereGeometry;
+  primaryCaps: Vector3[];
+  secondaryCaps: Vector3[];
+  nodeSphere: SphereGeometry;
+  nodeSpherePosition: Vector3;
+  nodeRing: TorusGeometry;
+  nodeRingPosition: Vector3;
+  /** Offset for the group so the mark is centred on its own bounds. */
+  center: Vector3;
+  dispose: () => void;
+};
+
+export function buildHeroMarkGeometry(): HeroMarkGeometry {
+  const {
+    tubeRadius,
+    primaryDepth,
+    secondaryDepth,
+    nodeSphereRadius,
+    nodeRingRadius,
+    nodeRingThickness,
+  } = HERO_MARK_CONFIG.geometry;
+
+  const primaryStroke = buildStroke(PRIMARY_STROKE, primaryDepth);
+  const secondaryStroke = buildStroke(SECONDARY_STROKE, secondaryDepth);
+
+  const cap = new SphereGeometry(tubeRadius, 16, 12);
+  const nodeSphere = new SphereGeometry(nodeSphereRadius, 36, 24);
+  const nodeRing = new TorusGeometry(
+    nodeRingRadius,
+    nodeRingThickness,
+    12,
+    48,
+  );
+
+  const nodeSpherePosition = toWorld(PRIMARY_NODE, primaryDepth);
+  const nodeRingPosition = toWorld(SECONDARY_NODE, secondaryDepth);
+
+  // The node sphere swallows the primary stroke's top end; the ring is hollow,
+  // so the secondary stroke still needs a cap there.
+  const primaryCaps = [toWorld(PRIMARY_STROKE.start, primaryDepth)];
+  const secondaryCaps = [
+    toWorld(SECONDARY_STROKE.start, secondaryDepth),
+    toWorld(SECONDARY_STROKE.end, secondaryDepth),
+  ];
+
+  primaryStroke.computeBoundingBox();
+  secondaryStroke.computeBoundingBox();
+
+  const bounds = new Box3();
+
+  if (primaryStroke.boundingBox) {
+    bounds.union(primaryStroke.boundingBox);
+  }
+
+  if (secondaryStroke.boundingBox) {
+    bounds.union(secondaryStroke.boundingBox);
+  }
+
+  bounds.expandByPoint(
+    nodeSpherePosition.clone().addScalar(nodeSphereRadius),
+  );
+  bounds.expandByPoint(
+    nodeSpherePosition.clone().addScalar(-nodeSphereRadius),
+  );
+  bounds.expandByPoint(nodeRingPosition.clone().addScalar(nodeRingRadius));
+  bounds.expandByPoint(nodeRingPosition.clone().addScalar(-nodeRingRadius));
+
+  const center = bounds.getCenter(new Vector3());
+
+  return {
+    primaryStroke,
+    secondaryStroke,
+    cap,
+    primaryCaps,
+    secondaryCaps,
+    nodeSphere,
+    nodeSpherePosition,
+    nodeRing,
+    nodeRingPosition,
+    center,
+    dispose: () => {
+      primaryStroke.dispose();
+      secondaryStroke.dispose();
+      cap.dispose();
+      nodeSphere.dispose();
+      nodeRing.dispose();
+    },
+  };
+}
