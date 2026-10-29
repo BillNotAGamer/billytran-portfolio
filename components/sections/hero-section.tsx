@@ -3,7 +3,6 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { HeroOrbit } from "@/components/ui/hero-orbit";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionPill } from "@/components/ui/section-pill";
-import { SignatureBlueprint } from "@/components/ui/signature-blueprint";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Tag } from "@/components/ui/tag";
@@ -26,10 +25,6 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
         */}
         <div className="grid items-center gap-16 lg:grid-cols-[1.08fr_0.92fr] lg:items-start lg:gap-10">
           <div className="relative max-w-3xl">
-            <div className="pointer-events-none absolute -right-20 top-4 hidden h-[22rem] w-[22rem] text-accent/12 lg:block">
-              <SignatureBlueprint />
-            </div>
-
             <Reveal immediate>
               <SectionPill>{portfolioData.hero.eyebrow}</SectionPill>
             </Reveal>
