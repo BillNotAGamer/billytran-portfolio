@@ -39,13 +39,26 @@ export function SiteHeader({
               <p className="font-display text-lg font-semibold text-foreground">
                 {portfolioData.header.brandName}
               </p>
-              <p className="whitespace-nowrap text-[0.72rem] uppercase tracking-[0.22em] text-muted">
+              {/*
+                Hidden exactly where it does not fit. From lg the nav joins the
+                row, and the tagline is the widest thing in the brand block
+                (308 of its 364px), so at 1024-1279 the row needed 1039px of a
+                944px container and pushed "Let's Talk" 55px off screen. It is
+                still there below lg, where there is no nav, and from xl, where
+                there is room.
+              */}
+              <p className="whitespace-nowrap text-[0.72rem] uppercase tracking-[0.22em] text-muted lg:hidden xl:block">
                 {portfolioData.header.tagline}
               </p>
             </div>
           </a>
 
-          <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
+          {/* Tighter between lg and xl, where the row is tightest, and back to
+              the original rhythm from xl. */}
+          <nav
+            aria-label="Primary"
+            className="hidden items-center gap-5 lg:flex xl:gap-7"
+          >
             {portfolioData.navigation.map((item) => (
               <a
                 key={item.href}
