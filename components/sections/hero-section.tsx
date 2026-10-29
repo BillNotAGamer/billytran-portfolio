@@ -106,7 +106,14 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
             </dl>
           </div>
 
-          <Reveal delay={0.16} className="lg:justify-self-end">
+          {/*
+            w-full is load-bearing. justify-self-end makes this grid item size
+            to its content, and every child of the orbit box is absolutely
+            positioned, so the box had nothing to measure: it collapsed to 0x0
+            at the lg breakpoint and took the whole card with it. Giving the
+            item the column's width resolves the orbit box's own w-full.
+          */}
+          <Reveal delay={0.16} className="w-full lg:justify-self-end">
             <HeroOrbit data={portfolioData} />
           </Reveal>
         </div>
