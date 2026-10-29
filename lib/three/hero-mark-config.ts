@@ -129,8 +129,16 @@ export const HERO_MARK_CONFIG = {
     ],
     /** Real lights on top of the environment, for crisper highlights. */
     ambientIntensity: 0.5,
-    keyLight: { position: [1.6, 2.1, 2.4], intensity: 2.1, color: "#cfefff" },
-    rimLight: { position: [-2.2, -1.1, -1.6], intensity: 1.3, color: "#79a1ff" },
+    keyLight: {
+      position: [1.6, 2.1, 2.4] as [number, number, number],
+      intensity: 2.1,
+      color: "#cfefff",
+    },
+    rimLight: {
+      position: [-2.2, -1.1, -1.6] as [number, number, number],
+      intensity: 1.3,
+      color: "#79a1ff",
+    },
     /**
      * Overall exposure. The single most useful knob if the mark looks washed out
      * or too dim.
@@ -201,8 +209,12 @@ export const HERO_MARK_CONFIG = {
   pointer: {
     /**
      * Pointer tilt. Mouse only, "full" tier only. Matched to the HeroOrbit card
-     * tilt it sits behind - the same plus/minus 7 degrees and the same easing
-     * factor - so the card and the mark move together rather than fighting.
+     * tilt it sits behind, using the same mapping and the same easing factor so
+     * the card and the mark move together rather than fighting.
+     *
+     * This is the full edge-to-edge sweep, so the mark reaches half of it -
+     * 3.5 degrees - with the pointer at an edge. That is exactly what
+     * HeroOrbit's MAX_TILT_DEGREES already produces.
      */
     maxTiltDeg: 7,
     /** Per-frame approach fraction. Lower is heavier and laggier. */
