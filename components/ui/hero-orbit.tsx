@@ -8,9 +8,19 @@ import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { useMotionTier } from "@/components/ui/use-motion-tier";
 import { clearHeroPointer, setHeroPointer } from "@/lib/motion/hero-signals";
 
+/**
+ * The lg: offsets are new. The orbit box reaches its 540px maximum at any
+ * container wide enough for it, so these badges have always overlapped the card
+ * by the same amount - but the box collapsed to 0x0 at the lg breakpoint (see
+ * hero-section.tsx), so nobody had seen the composition at desktop. With the
+ * box rendering, two of the three badges sat squarely over the card's eyebrow,
+ * heading and tag list. They are pushed far enough out here to clear the card's
+ * text column, keeping only the slight overlap with its padding that makes them
+ * read as floating in front of it. Below lg nothing changes.
+ */
 const floatingCards = [
   {
-    className: "left-0 top-[15%] w-44 md:-left-4 md:w-48",
+    className: "left-0 top-[15%] w-44 md:-left-4 md:w-48 lg:-left-24",
     title: "Architecture",
     copy: "Systems that stay readable as product scope expands.",
     duration: 12,
@@ -18,7 +28,7 @@ const floatingCards = [
     visibilityClass: "hidden md:block",
   },
   {
-    className: "right-0 top-[5%] w-44 lg:-right-6 lg:w-48",
+    className: "right-0 top-[5%] w-44 lg:-right-12 lg:w-48",
     title: "Interface Craft",
     copy: "Strong visual restraint with clearer interaction rhythm.",
     duration: 14,
@@ -26,7 +36,8 @@ const floatingCards = [
     visibilityClass: "hidden lg:block",
   },
   {
-    className: "bottom-[10%] left-[10%] w-44 sm:w-48 lg:bottom-[5%] lg:w-52",
+    className:
+      "bottom-[10%] left-[10%] w-44 sm:w-48 lg:bottom-[2%] lg:-left-28 lg:w-52",
     title: "Mobile Delivery",
     copy: "Product continuity carried cleanly into the app surface.",
     duration: 15,
