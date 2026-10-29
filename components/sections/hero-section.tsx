@@ -18,7 +18,13 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
     >
       <div className="absolute inset-x-0 top-0 -z-10 h-[42rem] bg-[radial-gradient(circle_at_top,rgba(121,161,255,0.2),transparent_34%),radial-gradient(circle_at_18%_20%,rgba(141,224,255,0.16),transparent_20%),radial-gradient(circle_at_82%_10%,rgba(220,180,123,0.08),transparent_20%)]" />
       <Container>
-        <div className="grid items-center gap-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10">
+        {/*
+          items-start, not items-center. The text column is far taller than the
+          orbit, so centring pushed the orbit down to y=650 at 1440x900 - below
+          the fold, with the top of the column empty. Aligning the two columns
+          at the top puts the orbit in the first screen at every desktop size.
+        */}
+        <div className="grid items-center gap-16 lg:grid-cols-[1.08fr_0.92fr] lg:items-start lg:gap-10">
           <div className="relative max-w-3xl">
             <div className="pointer-events-none absolute -right-20 top-4 hidden h-[22rem] w-[22rem] text-accent/12 lg:block">
               <SignatureBlueprint />
@@ -39,9 +45,17 @@ export function HeroSection({ data: portfolioData }: { data: PortfolioData }) {
             </Reveal>
 
             <Reveal delay={0.12} immediate>
+              {/*
+                Fluid from lg up. At the old xl:text-[5.8rem] the headline ran
+                to seven lines in a 691px column and ended 139px below the fold
+                at 1440x900. The clamp keeps it to four lines there and five at
+                1920, where the container is capped so the column stops growing.
+                Copy, gradient, tracking and the Phase 1 immediate entrance are
+                unchanged.
+              */}
               <h1
                 id="hero-title"
-                className="mt-8 max-w-4xl font-display text-5xl font-semibold tracking-[-0.055em] text-balance text-foreground sm:text-6xl lg:text-7xl xl:text-[5.8rem]"
+                className="mt-8 max-w-4xl font-display text-5xl font-semibold tracking-[-0.055em] text-balance text-foreground sm:text-6xl lg:text-[clamp(2.75rem,3.6vw,3.75rem)]"
               >
                 {portfolioData.hero.headlineLead}
                 <span className="bg-[linear-gradient(135deg,#f5f7fb_0%,#8de0ff_38%,#dcb47b_100%)] bg-clip-text text-transparent">
