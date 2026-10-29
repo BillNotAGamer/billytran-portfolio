@@ -46,12 +46,17 @@ const VIEWPORT_MARGIN = "240px";
  * client-side navigation - starts the crossfade again from the beginning rather
  * than revealing a canvas that has not drawn anything yet.
  */
+/** Why the scene gave up, if it did. Surfaced on the DOM for review. */
+type BailReason = "context-lost" | "performance";
+
 function HeroMarkCanvas({
   active,
-  onBail,
+  onContextLost,
+  onPerformanceFallback,
 }: {
   active: boolean;
-  onBail: () => void;
+  onContextLost: () => void;
+  onPerformanceFallback: () => void;
 }) {
   const fadeRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -70,8 +75,8 @@ function HeroMarkCanvas({
           active={active}
           fadeRef={fadeRef}
           onFirstFrame={handleFirstFrame}
-          onContextLost={onBail}
-          onPerformanceFallback={onBail}
+          onContextLost={onContextLost}
+          onPerformanceFallback={onPerformanceFallback}
         />
       </div>
     </div>
@@ -84,16 +89,16 @@ export function HeroMark() {
 
   const [sceneAllowed, setSceneAllowed] = useState(false);
   /** Set once and never cleared: from here the static mark is the right answer. */
-  const [bailed, setBailed] = useState(false);
+  const [bailed, setBailed] = useState<BailReason | null>(null);
   const [active, setActive] = useState(true);
 
   // Derived rather than stored, so the tier changing under us - a window
   // dragged below 1024px, reduced motion switched on, a lost context - gives
   // the GPU context back on the next render with no effect round-trip.
-  const mounted = sceneAllowed && !bailed && tier === "full";
+  const mounted = sceneAllowed && bailed === null && tier === "full";
 
   useEffect(() => {
-    if (bailed || tier !== "full") {
+    if (bailed !== null || tier !== "full") {
       return;
     }
 
@@ -170,15 +175,29 @@ export function HeroMark() {
     };
   }, [mounted]);
 
-  const handleBail = useCallback(() => setBailed(true), []);
+  const handleContextLost = useCallback(() => setBailed("context-lost"), []);
+  const handlePerformanceFallback = useCallback(
+    () => setBailed("performance"),
+    [],
+  );
 
   return (
     <div
       ref={rootRef}
       aria-hidden="true"
       className="pointer-events-none absolute inset-0"
+      // Decorative, and aria-hidden, so these are purely for the owner and for
+      // the verification harness: which mark is on screen, and why.
+      data-hero-mark={mounted ? "canvas" : "svg"}
+      data-hero-mark-bail={bailed ?? undefined}
     >
-      {mounted ? <HeroMarkCanvas active={active} onBail={handleBail} /> : null}
+      {mounted ? (
+        <HeroMarkCanvas
+          active={active}
+          onContextLost={handleContextLost}
+          onPerformanceFallback={handlePerformanceFallback}
+        />
+      ) : null}
 
       {/* After the canvas, so the crossfade is one transition: this fades out
           on top of a canvas that is already drawing. CSS does the hiding from
