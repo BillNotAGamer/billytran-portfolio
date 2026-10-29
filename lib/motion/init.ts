@@ -7,10 +7,12 @@ import {
   backdropParallax,
   featuredProjects,
   headingLines,
+  heroProgress,
   journey,
   scrollProgress,
   techStack,
 } from "@/lib/motion/choreography";
+import { setHeroScrollProgress } from "@/lib/motion/hero-signals";
 import { magneticButtons } from "@/lib/motion/magnetic";
 import { setActiveLenis } from "@/lib/motion/scroll-to";
 
@@ -42,6 +44,7 @@ export function initMotion(): MotionTeardown {
 
   const context = gsap.context(() => {
     scrollProgress(gsap);
+    heroProgress(ScrollTrigger);
     headingLines(gsap, SplitText);
     journey(gsap, ScrollTrigger);
     featuredProjects(gsap);
@@ -60,6 +63,10 @@ export function initMotion(): MotionTeardown {
     for (const trigger of ScrollTrigger.getAll()) {
       trigger.kill();
     }
+
+    // Nothing publishes hero progress once the triggers are gone, so leave it
+    // at rest rather than frozen wherever the reader last scrolled to.
+    setHeroScrollProgress(0);
 
     gsap.ticker.remove(tick);
     lenis.destroy();

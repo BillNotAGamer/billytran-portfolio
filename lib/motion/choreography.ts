@@ -2,6 +2,7 @@ import type { gsap as GsapType } from "gsap";
 import type { ScrollTrigger as ScrollTriggerType } from "gsap/ScrollTrigger";
 import type { SplitText as SplitTextType } from "gsap/SplitText";
 
+import { setHeroScrollProgress } from "@/lib/motion/hero-signals";
 import { DURATION, REVEAL_DISTANCE_PX, STAGGER } from "@/lib/motion/tokens";
 
 type Gsap = typeof GsapType;
@@ -38,6 +39,32 @@ export function scrollProgress(gsap: Gsap) {
     scaleX: 1,
     ease: "none",
     scrollTrigger: { start: 0, end: "max", scrub: 0.3 },
+  });
+}
+
+/**
+ * Publishes how far the hero has scrolled away, for the 3D hero mark to read
+ * each frame. Nothing is animated here: this exists so the scene can be
+ * scroll-driven without adding a scroll listener of its own, keeping
+ * ScrollTrigger - driven by Lenis, driven by gsap.ticker - the only reader of
+ * the scroll position on the page.
+ */
+export function heroProgress(ScrollTrigger: ScrollTriggerStatic) {
+  const hero = document.getElementById("top");
+
+  if (!hero) {
+    return;
+  }
+
+  ScrollTrigger.create({
+    trigger: hero,
+    start: "top top",
+    end: "bottom top",
+    onUpdate: (self) => setHeroScrollProgress(self.progress),
+    // Covers a resize or a late ScrollTrigger.refresh() landing mid-page.
+    onRefresh: (self) => setHeroScrollProgress(self.progress),
+    onLeave: () => setHeroScrollProgress(1),
+    onLeaveBack: () => setHeroScrollProgress(0),
   });
 }
 
