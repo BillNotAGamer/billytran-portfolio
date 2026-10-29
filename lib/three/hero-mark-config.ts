@@ -15,19 +15,22 @@
 /** One SVG user unit, expressed in world units. */
 export const SVG_UNIT = 1 / 320;
 
+/**
+ * Brand palette, mirrored from the --accent* custom properties in
+ * app/globals.css. Keep the two in sync by hand. Hoisted out of the config
+ * object so the material gradients below can name these colours.
+ */
+const PALETTE = {
+  /** --accent. */
+  accent: "#8de0ff",
+  /** --accent-secondary. */
+  accentSecondary: "#79a1ff",
+  /** --accent-warm. */
+  accentWarm: "#dcb47b",
+};
+
 export const HERO_MARK_CONFIG = {
-  /**
-   * Brand palette, mirrored from the --accent* custom properties in
-   * app/globals.css. Keep the two in sync by hand.
-   */
-  colors: {
-    /** --accent. Primary stroke and node sphere. */
-    accent: "#8de0ff",
-    /** --accent-secondary. The trailing stroke. */
-    accentSecondary: "#79a1ff",
-    /** --accent-warm. The small ring and the warmest particles. */
-    accentWarm: "#dcb47b",
-  },
+  colors: PALETTE,
 
   camera: {
     /** Vertical field of view in degrees. Lower is flatter, more product-shot. */
@@ -38,11 +41,17 @@ export const HERO_MARK_CONFIG = {
 
   geometry: {
     /**
-     * Overall size multiplier. 1.32 makes the mark slightly wider than the glass
-     * card in front of it, so its arms and nodes read in the frame margin rather
-     * than sitting entirely behind the card.
+     * Overall size multiplier, relative to the mark's own band - the canvas no
+     * longer covers the whole orbit box, it covers the band above the card.
+     *
+     * 1.27 makes the mark about 90% of the band's height, and is also what
+     * lines the 3D mark up with the static SVG behind it: the SVG's ink is 76%
+     * of its square box, the 3D mark's is 71% of the band height per unit of
+     * scale, and the fallback's box is 119% of the band height. Change this and
+     * the crossfade will start to jump, so change .hero-mark-fallback's height
+     * in hero-orbit.tsx with it.
      */
-    markScale: 1.32,
+    markScale: 1.27,
     /** Nudge the whole mark, in world units, after it is centred on itself. */
     offsetX: 0,
     offsetY: 0,
@@ -51,7 +60,7 @@ export const HERO_MARK_CONFIG = {
      * 0.028; a little chunkier reads better with a specular highlight running
      * along it.
      */
-    tubeRadius: 0.036,
+    tubeRadius: 0.03,
     /** Lengthwise tube resolution. Below about 90 the corner bezier facets. */
     tubeSegments: 150,
     /** Radial tube resolution. 10 to 12 is plenty at this scale. */
@@ -80,37 +89,56 @@ export const HERO_MARK_CONFIG = {
   },
 
   materials: {
-    /** Primary stroke and node sphere: polished, lightly metallic glass. */
+    /**
+     * Primary stroke and node sphere: polished, lightly metallic glass.
+     *
+     * `gradientFrom`/`gradientTo` run along the stroke's length as per-vertex
+     * colours, so one material draws a gradient with no custom shader and no
+     * extra dependency. `emissive` is a single colour - three has no per-vertex
+     * emissive - so it is set to the end the hue should lean towards.
+     */
     primary: {
-      metalness: 0.55,
-      roughness: 0.16,
+      gradientFrom: PALETTE.accent,
+      gradientTo: PALETTE.accentSecondary,
+      emissive: PALETTE.accent,
+      metalness: 0.52,
+      roughness: 0.11,
       clearcoat: 1,
-      clearcoatRoughness: 0.12,
+      clearcoatRoughness: 0.06,
       /** Reflection strength. Raise for more chrome, lower for more matte. */
-      envMapIntensity: 1.45,
+      envMapIntensity: 1.5,
       /** Self-lit floor, so the mark never goes black when turned away. */
-      emissiveIntensity: 0.52,
+      emissiveIntensity: 0.62,
       opacity: 1,
     },
     /** Trailing stroke: dimmer and softer, the SVG 0.34 layer. */
     secondary: {
-      metalness: 0.4,
-      roughness: 0.3,
-      clearcoat: 0.6,
-      clearcoatRoughness: 0.25,
-      envMapIntensity: 1,
-      emissiveIntensity: 0.32,
+      /** Reversed, so the two strokes lean opposite ways and read apart. */
+      gradientFrom: PALETTE.accentSecondary,
+      gradientTo: PALETTE.accent,
+      emissive: PALETTE.accentSecondary,
+      metalness: 0.42,
+      roughness: 0.22,
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.12,
+      envMapIntensity: 1.1,
+      emissiveIntensity: 0.4,
       /**
        * Below 1 the stroke becomes translucent. The two strokes never overlap on
        * screen - that is why the flat SVG reads cleanly - so this needs no depth
        * sorting care.
        */
-      opacity: 0.78,
+      opacity: 0.8,
     },
-    /** The warm ring around the second node. */
+    /** The warm ring around the primary node. Left as the owner liked it. */
     ring: {
+      gradientFrom: PALETTE.accentWarm,
+      gradientTo: PALETTE.accentWarm,
+      emissive: PALETTE.accentWarm,
       metalness: 0.75,
       roughness: 0.22,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.2,
       envMapIntensity: 1.3,
       emissiveIntensity: 0.55,
       opacity: 0.9,

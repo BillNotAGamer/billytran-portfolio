@@ -1,7 +1,10 @@
 import {
   Box3,
+  type BufferGeometry,
+  Color,
   CubicBezierCurve3,
   CurvePath,
+  Float32BufferAttribute,
   LineCurve3,
   SphereGeometry,
   TorusGeometry,
@@ -95,16 +98,60 @@ function buildStroke(spec: StrokeSpec, z: number) {
   );
 }
 
+/**
+ * Per-vertex colour running along a tube's length, read from the u coordinate
+ * TubeGeometry already writes. The material carries white and multiplies by
+ * this, so one material draws a gradient with no custom shader and nothing new
+ * to install.
+ */
+function applyLengthGradient(geometry: BufferGeometry, from: string, to: string) {
+  const uv = geometry.getAttribute("uv");
+  const start = new Color(from);
+  const end = new Color(to);
+  const mixed = new Color();
+  const colors = new Float32Array(uv.count * 3);
+
+  for (let index = 0; index < uv.count; index += 1) {
+    mixed.copy(start).lerp(end, uv.getX(index));
+    colors[index * 3] = mixed.r;
+    colors[index * 3 + 1] = mixed.g;
+    colors[index * 3 + 2] = mixed.b;
+  }
+
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+}
+
+/**
+ * The same attribute with one colour throughout, so the caps and the nodes can
+ * share a vertexColors material with the tube they belong to. A geometry with
+ * no colour attribute under such a material would render undefined.
+ */
+function applyFlatColor(geometry: BufferGeometry, hex: string) {
+  const count = geometry.getAttribute("position").count;
+  const color = new Color(hex);
+  const colors = new Float32Array(count * 3);
+
+  for (let index = 0; index < count; index += 1) {
+    colors[index * 3] = color.r;
+    colors[index * 3 + 1] = color.g;
+    colors[index * 3 + 2] = color.b;
+  }
+
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+}
+
 export type HeroMarkGeometry = {
   primaryStroke: TubeGeometry;
   secondaryStroke: TubeGeometry;
   /**
-   * TubeGeometry is open at both ends. This sphere is instanced at every free
-   * end to reproduce the SVG stroke-linecap="round"; ends that a node covers do
-   * not get one.
+   * TubeGeometry is open at both ends. These spheres cap every free end to
+   * reproduce the SVG stroke-linecap="round"; ends that a node covers do not
+   * get one. There is one per stroke because each carries its stroke's colour
+   * at the end of the gradient where it sits.
    */
-  cap: SphereGeometry;
+  primaryCap: SphereGeometry;
   primaryCaps: Vector3[];
+  secondaryCap: SphereGeometry;
   secondaryCaps: Vector3[];
   /** The bright node, where the primary stroke ends. */
   nodeSphere: SphereGeometry;
@@ -135,10 +182,28 @@ export function buildHeroMarkGeometry(): HeroMarkGeometry {
 
   const nodeRingRadius = nodeSphereRadius * nodeRingScale;
 
-  const cap = new SphereGeometry(tubeRadius, 16, 12);
+  const primaryCap = new SphereGeometry(tubeRadius, 16, 12);
+  const secondaryCap = new SphereGeometry(tubeRadius, 16, 12);
   const nodeSphere = new SphereGeometry(nodeSphereRadius, 36, 24);
   const nodeSecondary = new SphereGeometry(nodeSecondaryRadius, 28, 20);
   const nodeRing = new TorusGeometry(nodeRingRadius, nodeRingThickness, 12, 48);
+
+  // Each stroke fades along its length; the cap sits at the start of its
+  // gradient and the node it runs into sits at the end, so the colour is
+  // continuous across the join.
+  const { primary, secondary, ring } = HERO_MARK_CONFIG.materials;
+
+  applyLengthGradient(primaryStroke, primary.gradientFrom, primary.gradientTo);
+  applyLengthGradient(
+    secondaryStroke,
+    secondary.gradientFrom,
+    secondary.gradientTo,
+  );
+  applyFlatColor(primaryCap, primary.gradientFrom);
+  applyFlatColor(secondaryCap, secondary.gradientFrom);
+  applyFlatColor(nodeSphere, primary.gradientTo);
+  applyFlatColor(nodeSecondary, secondary.gradientTo);
+  applyFlatColor(nodeRing, ring.gradientFrom);
 
   const nodeSpherePosition = toWorld(PRIMARY_NODE, primaryDepth);
   const nodeSecondaryPosition = toWorld(SECONDARY_NODE, secondaryDepth);
@@ -174,8 +239,9 @@ export function buildHeroMarkGeometry(): HeroMarkGeometry {
   return {
     primaryStroke,
     secondaryStroke,
-    cap,
+    primaryCap,
     primaryCaps,
+    secondaryCap,
     secondaryCaps,
     nodeSphere,
     nodeSpherePosition,
@@ -186,7 +252,8 @@ export function buildHeroMarkGeometry(): HeroMarkGeometry {
     dispose: () => {
       primaryStroke.dispose();
       secondaryStroke.dispose();
-      cap.dispose();
+      primaryCap.dispose();
+      secondaryCap.dispose();
       nodeSphere.dispose();
       nodeSecondary.dispose();
       nodeRing.dispose();

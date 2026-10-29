@@ -89,29 +89,38 @@ function SignatureMark({ fadeRef }: { fadeRef: HeroMarkSceneProps["fadeRef"] }) 
   const geometry = useMemo(() => buildHeroMarkGeometry(), []);
 
   const materials = useMemo(() => {
-    const { colors, lighting, materials: settings } = HERO_MARK_CONFIG;
+    const { lighting, materials: settings } = HERO_MARK_CONFIG;
 
-    // environmentIntensity is folded in here rather than set on the scene, so
-    // it stays a single global multiplier over the per-material values.
-    const build = (
-      hex: string,
-      values:
-        | typeof settings.primary
-        | typeof settings.secondary
-        | typeof settings.ring,
-    ) =>
+    /**
+     * Every geometry carries a colour attribute (see signature-geometry.ts), so
+     * the material itself stays white and the hue - flat on the solids, a
+     * gradient along the tubes - comes from the mesh. environmentIntensity is
+     * folded in here rather than set on the scene, so it stays a single global
+     * multiplier over the per-material values.
+     *
+     * The fields are listed one by one rather than spread: the config also
+     * carries gradient endpoints, and MeshPhysicalMaterial warns about every
+     * property it does not recognise.
+     */
+    const build = (values: typeof settings.primary) =>
       new MeshPhysicalMaterial({
-        ...values,
-        color: new Color(hex),
-        emissive: new Color(hex),
+        color: new Color(0xffffff),
+        vertexColors: true,
+        emissive: new Color(values.emissive),
+        emissiveIntensity: values.emissiveIntensity,
+        metalness: values.metalness,
+        roughness: values.roughness,
+        clearcoat: values.clearcoat,
+        clearcoatRoughness: values.clearcoatRoughness,
         envMapIntensity: values.envMapIntensity * lighting.environmentIntensity,
+        opacity: values.opacity,
         transparent: values.opacity < 1,
       });
 
     return {
-      primary: build(colors.accent, settings.primary),
-      secondary: build(colors.accentSecondary, settings.secondary),
-      ring: build(colors.accentWarm, settings.ring),
+      primary: build(settings.primary),
+      secondary: build(settings.secondary),
+      ring: build(settings.ring),
     };
   }, []);
 
@@ -202,7 +211,7 @@ function SignatureMark({ fadeRef }: { fadeRef: HeroMarkSceneProps["fadeRef"] }) 
         {geometry.primaryCaps.map((position) => (
           <mesh
             key={`primary-cap-${position.x}-${position.y}`}
-            geometry={geometry.cap}
+            geometry={geometry.primaryCap}
             material={materials.primary}
             position={position}
             dispose={null}
@@ -211,7 +220,7 @@ function SignatureMark({ fadeRef }: { fadeRef: HeroMarkSceneProps["fadeRef"] }) 
         {geometry.secondaryCaps.map((position) => (
           <mesh
             key={`secondary-cap-${position.x}-${position.y}`}
-            geometry={geometry.cap}
+            geometry={geometry.secondaryCap}
             material={materials.secondary}
             position={position}
             dispose={null}
@@ -420,8 +429,22 @@ export default function HeroMarkScene({
   const [qualityFactor, setQualityFactor] = useState(1);
   const floorDeclines = useRef(0);
 
-  const dpr =
-    quality.minDpr + (quality.maxDpr - quality.minDpr) * qualityFactor;
+  /**
+   * maxDpr is a ceiling, not a target. Passing R3F a bare number sets the pixel
+   * ratio outright, so on an ordinary 1x monitor the scene was rendering 1.75x
+   * in each direction - about three times the pixels the display can show, for
+   * no visible gain. Read once, because a window that moves between monitors is
+   * rarer than a render.
+   */
+  const [deviceDpr] = useState(() =>
+    typeof window === "undefined" ? 1 : window.devicePixelRatio || 1,
+  );
+
+  const ceiling = Math.min(
+    quality.maxDpr,
+    Math.max(quality.minDpr, deviceDpr),
+  );
+  const dpr = quality.minDpr + (ceiling - quality.minDpr) * qualityFactor;
 
   const particleCount = Math.round(
     particles.count *
