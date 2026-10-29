@@ -106,10 +106,14 @@ export type HeroMarkGeometry = {
   cap: SphereGeometry;
   primaryCaps: Vector3[];
   secondaryCaps: Vector3[];
+  /** The bright node, where the primary stroke ends. */
   nodeSphere: SphereGeometry;
   nodeSpherePosition: Vector3;
+  /** A warm ring around that same node. */
   nodeRing: TorusGeometry;
-  nodeRingPosition: Vector3;
+  /** The fainter node, where the secondary stroke ends. */
+  nodeSecondary: SphereGeometry;
+  nodeSecondaryPosition: Vector3;
   /** Offset for the group so the mark is centred on its own bounds. */
   center: Vector3;
   dispose: () => void;
@@ -121,32 +125,28 @@ export function buildHeroMarkGeometry(): HeroMarkGeometry {
     primaryDepth,
     secondaryDepth,
     nodeSphereRadius,
-    nodeRingRadius,
+    nodeSecondaryRadius,
+    nodeRingScale,
     nodeRingThickness,
   } = HERO_MARK_CONFIG.geometry;
 
   const primaryStroke = buildStroke(PRIMARY_STROKE, primaryDepth);
   const secondaryStroke = buildStroke(SECONDARY_STROKE, secondaryDepth);
 
+  const nodeRingRadius = nodeSphereRadius * nodeRingScale;
+
   const cap = new SphereGeometry(tubeRadius, 16, 12);
   const nodeSphere = new SphereGeometry(nodeSphereRadius, 36, 24);
-  const nodeRing = new TorusGeometry(
-    nodeRingRadius,
-    nodeRingThickness,
-    12,
-    48,
-  );
+  const nodeSecondary = new SphereGeometry(nodeSecondaryRadius, 28, 20);
+  const nodeRing = new TorusGeometry(nodeRingRadius, nodeRingThickness, 12, 48);
 
   const nodeSpherePosition = toWorld(PRIMARY_NODE, primaryDepth);
-  const nodeRingPosition = toWorld(SECONDARY_NODE, secondaryDepth);
+  const nodeSecondaryPosition = toWorld(SECONDARY_NODE, secondaryDepth);
 
-  // The node sphere swallows the primary stroke's top end; the ring is hollow,
-  // so the secondary stroke still needs a cap there.
+  // Each node swallows the end of its own stroke, so only the two free ends
+  // need the sphere cap that stands in for stroke-linecap="round".
   const primaryCaps = [toWorld(PRIMARY_STROKE.start, primaryDepth)];
-  const secondaryCaps = [
-    toWorld(SECONDARY_STROKE.start, secondaryDepth),
-    toWorld(SECONDARY_STROKE.end, secondaryDepth),
-  ];
+  const secondaryCaps = [toWorld(SECONDARY_STROKE.start, secondaryDepth)];
 
   primaryStroke.computeBoundingBox();
   secondaryStroke.computeBoundingBox();
@@ -161,14 +161,13 @@ export function buildHeroMarkGeometry(): HeroMarkGeometry {
     bounds.union(secondaryStroke.boundingBox);
   }
 
-  bounds.expandByPoint(
-    nodeSpherePosition.clone().addScalar(nodeSphereRadius),
-  );
-  bounds.expandByPoint(
-    nodeSpherePosition.clone().addScalar(-nodeSphereRadius),
-  );
-  bounds.expandByPoint(nodeRingPosition.clone().addScalar(nodeRingRadius));
-  bounds.expandByPoint(nodeRingPosition.clone().addScalar(-nodeRingRadius));
+  for (const [position, radius] of [
+    [nodeSpherePosition, Math.max(nodeSphereRadius, nodeRingRadius)],
+    [nodeSecondaryPosition, nodeSecondaryRadius],
+  ] as const) {
+    bounds.expandByPoint(position.clone().addScalar(radius));
+    bounds.expandByPoint(position.clone().addScalar(-radius));
+  }
 
   const center = bounds.getCenter(new Vector3());
 
@@ -181,13 +180,15 @@ export function buildHeroMarkGeometry(): HeroMarkGeometry {
     nodeSphere,
     nodeSpherePosition,
     nodeRing,
-    nodeRingPosition,
+    nodeSecondary,
+    nodeSecondaryPosition,
     center,
     dispose: () => {
       primaryStroke.dispose();
       secondaryStroke.dispose();
       cap.dispose();
       nodeSphere.dispose();
+      nodeSecondary.dispose();
       nodeRing.dispose();
     },
   };

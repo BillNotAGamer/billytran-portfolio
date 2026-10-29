@@ -62,11 +62,21 @@ export const HERO_MARK_CONFIG = {
      */
     primaryDepth: 0.085,
     secondaryDepth: -0.1,
-    /** Node sphere. The SVG circle is r=24, scaled a little for presence. */
+    /** Primary node. The SVG circle is r=24, scaled a little for presence. */
     nodeSphereRadius: 24 * SVG_UNIT * 1.15,
-    /** Node ring. The SVG circle is r=16, drawn as a torus facing the camera. */
-    nodeRingRadius: 16 * SVG_UNIT * 1.35,
-    nodeRingThickness: 0.014,
+    /** Secondary node. The SVG's fainter circle, r=16. */
+    nodeSecondaryRadius: 16 * SVG_UNIT * 1.1,
+    /**
+     * A warm ring around the primary node, as a multiple of its radius. It sits
+     * on the primary node rather than the secondary one because at desktop the
+     * secondary node falls behind the top-right floating badge, and this is the
+     * only place --accent-warm appears in the geometry.
+     */
+    nodeRingScale: 1.75,
+    nodeRingThickness: 0.012,
+    /** Tilt of the ring, in degrees, so it reads as a ring and not a circle. */
+    nodeRingTiltXDeg: 24,
+    nodeRingTiltYDeg: -18,
   },
 
   materials: {
@@ -79,7 +89,7 @@ export const HERO_MARK_CONFIG = {
       /** Reflection strength. Raise for more chrome, lower for more matte. */
       envMapIntensity: 1.45,
       /** Self-lit floor, so the mark never goes black when turned away. */
-      emissiveIntensity: 0.34,
+      emissiveIntensity: 0.52,
       opacity: 1,
     },
     /** Trailing stroke: dimmer and softer, the SVG 0.34 layer. */
@@ -89,7 +99,7 @@ export const HERO_MARK_CONFIG = {
       clearcoat: 0.6,
       clearcoatRoughness: 0.25,
       envMapIntensity: 1,
-      emissiveIntensity: 0.16,
+      emissiveIntensity: 0.32,
       /**
        * Below 1 the stroke becomes translucent. The two strokes never overlap on
        * screen - that is why the flat SVG reads cleanly - so this needs no depth
@@ -102,14 +112,14 @@ export const HERO_MARK_CONFIG = {
       metalness: 0.75,
       roughness: 0.22,
       envMapIntensity: 1.3,
-      emissiveIntensity: 0.4,
+      emissiveIntensity: 0.55,
       opacity: 0.9,
     },
   },
 
   lighting: {
     /** Overall environment reflection strength. */
-    environmentIntensity: 0.85,
+    environmentIntensity: 1.0,
     /** Top and bottom of the background gradient painted into the env map. */
     environmentTopColor: "#1b2740",
     environmentBottomColor: "#05070c",
@@ -143,7 +153,7 @@ export const HERO_MARK_CONFIG = {
      * Overall exposure. The single most useful knob if the mark looks washed out
      * or too dim.
      */
-    toneMappingExposure: 1.05,
+    toneMappingExposure: 1.18,
   },
 
   glow: {
@@ -153,7 +163,7 @@ export const HERO_MARK_CONFIG = {
      */
     enabled: true,
     /** 0 is off, 1 is as painted. Above about 0.6 it washes out the card text. */
-    strength: 0.42,
+    strength: 0.5,
     /** Diameter of the plane in world units. */
     size: 3.1,
     /** How far behind the mark it sits. */
@@ -240,12 +250,31 @@ export const HERO_MARK_CONFIG = {
     minDpr: 1,
     maxDpr: 1.75,
     /**
-     * PerformanceMonitor settings. `flipflops` is how many times quality may
-     * oscillate before the scene gives up and hands back to the static SVG.
+     * PerformanceMonitor sampling. One quality decision is taken every
+     * sampleMs * iterations, so these give a decision about once a second.
      */
-    flipflops: 3,
-    /** Sampling window per measurement, in milliseconds. */
-    sampleMs: 250,
+    sampleMs: 200,
+    iterations: 5,
+    /**
+     * How much quality moves per decision. At 0.25 the scene can go from full
+     * to minimum in four steps, i.e. about four seconds.
+     */
+    step: 0.25,
+    /**
+     * How many quality adjustments to allow before giving up and handing back
+     * to the static SVG. Note this counts every adjustment, not just reversals,
+     * so it has to be comfortably more than the number of steps from full to
+     * minimum - otherwise a machine that merely stutters during page load would
+     * lose the scene permanently.
+     */
+    flipflops: 8,
+    /**
+     * The other half of giving up. A device that is simply always too slow
+     * never oscillates: it declines to the floor and stays there, which the
+     * flipflop count alone reads as stability. This many further declines once
+     * quality is already at its minimum means the scene is not worth keeping.
+     */
+    floorDeclinesBeforeFallback: 3,
   },
 
   /**

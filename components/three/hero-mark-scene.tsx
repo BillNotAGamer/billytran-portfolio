@@ -227,7 +227,18 @@ function SignatureMark({ fadeRef }: { fadeRef: HeroMarkSceneProps["fadeRef"] }) 
         <mesh
           geometry={geometry.nodeRing}
           material={materials.ring}
-          position={geometry.nodeRingPosition}
+          position={geometry.nodeSpherePosition}
+          rotation={[
+            HERO_MARK_CONFIG.geometry.nodeRingTiltXDeg * DEGREES,
+            HERO_MARK_CONFIG.geometry.nodeRingTiltYDeg * DEGREES,
+            0,
+          ]}
+          dispose={null}
+        />
+        <mesh
+          geometry={geometry.nodeSecondary}
+          material={materials.secondary}
+          position={geometry.nodeSecondaryPosition}
           dispose={null}
         />
       </group>
@@ -407,6 +418,7 @@ export default function HeroMarkScene({
   // 1 is full quality. PerformanceMonitor steps this down, which lowers both
   // the device pixel ratio and the particle count.
   const [qualityFactor, setQualityFactor] = useState(1);
+  const floorDeclines = useRef(0);
 
   const dpr =
     quality.minDpr + (quality.maxDpr - quality.minDpr) * qualityFactor;
@@ -435,15 +447,32 @@ export default function HeroMarkScene({
     >
       <PerformanceMonitor
         ms={quality.sampleMs}
+        iterations={quality.iterations}
+        step={quality.step}
         flipflops={quality.flipflops}
-        // Quantised to quarters, so a wobbling frame rate cannot thrash the
-        // particle buffers; only a real, sustained change moves the quality.
-        onChange={({ factor }) => {
-          const stepped = Math.round(factor * 4) / 4;
-
+        onChange={({ factor }) =>
           setQualityFactor((previous) =>
-            previous === stepped ? previous : stepped,
-          );
+            previous === factor ? previous : factor,
+          )
+        }
+        onIncline={() => {
+          floorDeclines.current = 0;
+        }}
+        onDecline={({ factor }) => {
+          // The flipflop counter cannot tell "oscillating" from "pinned at the
+          // floor", and a device that is simply always too slow only ever does
+          // the latter. Catch that case explicitly.
+          if (factor > 0) {
+            floorDeclines.current = 0;
+
+            return;
+          }
+
+          floorDeclines.current += 1;
+
+          if (floorDeclines.current >= quality.floorDeclinesBeforeFallback) {
+            onPerformanceFallback();
+          }
         }}
         onFallback={onPerformanceFallback}
       />
