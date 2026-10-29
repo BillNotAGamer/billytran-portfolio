@@ -203,8 +203,21 @@ export function HeroMark() {
           on top of a canvas that is already drawing. CSS does the hiding from
           the adjacent-sibling state, which also means it fades back in by
           itself if the canvas layer ever goes away. */}
-      <div className="hero-mark-fallback absolute inset-[9%]">
-        <SignatureBlueprint className="text-accent/45" />
+      <div className="hero-mark-fallback absolute inset-0">
+        {/*
+          The band is wider than it is tall, so the square SVG would letterbox
+          to the band's height and draw its mark smaller than the 3D one, and
+          the crossfade would visibly jump. Sizing the SVG's box to 119% of the
+          band height instead lines the two marks up - see markScale in
+          lib/three/hero-mark-config.ts, which is set from the same arithmetic.
+          Centred with flex rather than a translate, because the float
+          animation on this element already owns transform.
+        */}
+        <div className="flex h-full w-full items-center justify-center">
+          <div className="aspect-square h-[119%]">
+            <SignatureBlueprint className="text-accent/45" />
+          </div>
+        </div>
       </div>
     </div>
   );

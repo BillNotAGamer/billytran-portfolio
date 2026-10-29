@@ -9,40 +9,42 @@ import { useMotionTier } from "@/components/ui/use-motion-tier";
 import { clearHeroPointer, setHeroPointer } from "@/lib/motion/hero-signals";
 
 /**
- * The lg: offsets are new. The orbit box reaches its 540px maximum at any
- * container wide enough for it, so these badges have always overlapped the card
- * by the same amount - but the box collapsed to 0x0 at the lg breakpoint (see
- * hero-section.tsx), so nobody had seen the composition at desktop. With the
- * box rendering, two of the three badges sat squarely over the card's eyebrow,
- * heading and tag list. They are pushed far enough out here to clear the card's
- * text column, keeping only the slight overlap with its padding that makes them
- * read as floating in front of it. Below lg nothing changes.
+ * The badges only appear from xl up, and only in the mark's band.
+ *
+ * They are 160px wide, and from 1024 to 1279 there is nowhere in the box that
+ * wide which is clear of both the card's text and the mark: the box is 416 to
+ * 534px across, the card fills its width, and the mark sits in the middle of
+ * the band. Rather than overlap something, they are hidden below xl - the
+ * trade-off the composition brief asks for.
+ *
+ * From xl they straddle the box's left and right edges inside the band, which
+ * carries no text, so they keep the "floating in front" reading without ever
+ * covering card copy, the node sphere or the warm ring.
  */
 const floatingCards = [
   {
-    className: "left-0 top-[15%] w-44 md:-left-4 md:w-48 lg:-left-24",
+    className: "-left-8 top-[4%] w-40",
     title: "Architecture",
     copy: "Systems that stay readable as product scope expands.",
     duration: 12,
     delay: 0,
-    visibilityClass: "hidden md:block",
+    visibilityClass: "hidden xl:block",
   },
   {
-    className: "right-0 top-[5%] w-44 lg:-right-12 lg:w-48",
+    className: "-right-10 top-[17%] w-40",
     title: "Interface Craft",
     copy: "Strong visual restraint with clearer interaction rhythm.",
     duration: 14,
     delay: 0.6,
-    visibilityClass: "hidden lg:block",
+    visibilityClass: "hidden xl:block",
   },
   {
-    className:
-      "bottom-[10%] left-[10%] w-44 sm:w-48 lg:bottom-[2%] lg:-left-28 lg:w-52",
+    className: "-left-8 top-[32%] w-40",
     title: "Mobile Delivery",
     copy: "Product continuity carried cleanly into the app surface.",
     duration: 15,
     delay: 0.3,
-    visibilityClass: "hidden sm:block",
+    visibilityClass: "hidden xl:block",
   },
 ] as const;
 
@@ -156,9 +158,16 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
   };
 
   return (
+    /*
+     * The box is no longer a fixed aspect box with the card floated inside it.
+     * It is a stage for the mark with the card stacked underneath, both in
+     * normal flow, so the box grows to whatever the card needs. That is what
+     * stops the card clipping its own description and tags below lg, and it is
+     * what gives the mark a band of its own that no text ever crosses.
+     */
     <div
       ref={rootRef}
-      className="relative mx-auto aspect-[0.92] w-full max-w-[540px]"
+      className="relative mx-auto w-full max-w-[540px] p-[6%] lg:p-[5%]"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
@@ -168,43 +177,61 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
       />
 
       <div className="absolute inset-0 rounded-[2.25rem] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))]" />
-      <div className="absolute inset-[7%] rounded-[2rem] border border-white/[0.06] [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:82px_82px] opacity-40" />
+      <div className="absolute inset-[3%] rounded-[2rem] border border-white/[0.06] [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:82px_82px] opacity-40" />
 
-      <HeroMark />
+      {/*
+        The mark's own band. Wider and shorter below lg so a phone does not get
+        an enormous hero; at lg the ratio is set by what is left over once the
+        card and the fold are accounted for.
+      */}
+      <div className="relative aspect-[1.62] lg:aspect-[1.5]">
+        <HeroMark />
+      </div>
 
-      <div className="hero-orbit-card-float absolute inset-[10%]">
+      <div className="hero-orbit-card-float relative mt-[5%] lg:mt-[3%]">
         <div
           ref={tiltRef}
-          className="hero-orbit-tilt h-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(160deg,rgba(15,20,31,0.86),rgba(10,13,21,0.76))] p-7 shadow-[0_32px_90px_-36px_rgba(0,0,0,0.85)] sm:p-8"
+          className="hero-orbit-tilt overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(160deg,rgba(14,19,30,0.97),rgba(9,12,20,0.95))] p-6 shadow-[0_32px_90px_-36px_rgba(0,0,0,0.85)] sm:p-7 lg:p-5"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(121,161,255,0.18),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(220,180,123,0.08),transparent_22%)]" />
-          <div className="absolute inset-x-0 top-10 h-px bg-[linear-gradient(90deg,transparent,rgba(141,224,255,0.35),transparent)]" />
 
-          <div className="relative flex h-full flex-col justify-between">
-            <div>
-              <div className="flex items-start justify-between gap-5">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.24em] text-accent/80">
-                    {portfolioData.hero.orbitEyebrow}
-                  </p>
-                  <h3 className="mt-4 max-w-xs font-display text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-[2.1rem]">
-                    {portfolioData.hero.orbitTitle}
-                  </h3>
-                </div>
-                <SignatureGlyph size="md" className="text-accent-warm/85" />
-              </div>
-              <p className="mt-5 text-sm leading-7 text-muted-strong sm:text-base">
-                {portfolioData.hero.orbitDescription}
+          <div className="relative flex flex-col">
+            {/*
+              The eyebrow and the glyph share a row and the rule sits under
+              them, instead of the rule being pinned 40px down the card where a
+              wrapped eyebrow ran straight through it.
+            */}
+            <div className="flex items-center justify-between gap-4">
+              <p className="whitespace-nowrap text-xs uppercase tracking-[0.2em] text-accent/80 sm:text-sm sm:tracking-[0.24em]">
+                {portfolioData.hero.orbitEyebrow}
               </p>
+              <SignatureGlyph
+                size="sm"
+                className="shrink-0 text-accent-warm/85"
+              />
             </div>
 
-            <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-3 h-px bg-[linear-gradient(90deg,transparent,rgba(141,224,255,0.35),transparent)]" />
+
+            <h3 className="mt-3.5 font-display text-2xl font-semibold tracking-[-0.035em] text-foreground sm:text-[1.75rem] lg:text-[1.5rem]">
+              {portfolioData.hero.orbitTitle}
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-muted-strong">
+              {portfolioData.hero.orbitDescription}
+            </p>
+
+            {/*
+              Chips rather than a 2x2 grid of bordered boxes. Same four labels,
+              122px of card height down to about 60, which is most of what buys
+              the mark its band.
+            */}
+            <ul className="mt-4 flex flex-wrap gap-2">
               {portfolioData.heroOrbitTags.map((item) => (
                 <li
                   key={item}
-                  className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-muted-strong"
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-muted-strong"
                 >
-                  <div className="mb-2 h-px w-10 bg-[linear-gradient(90deg,rgba(141,224,255,0.6),transparent)]" />
                   {item}
                 </li>
               ))}
@@ -217,7 +244,7 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
         <div
           key={card.title}
           aria-hidden="true"
-          className={`${card.visibilityClass} hero-orbit-badge-float pointer-events-none absolute rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(17,22,33,0.92),rgba(12,16,25,0.84))] p-4 shadow-[0_22px_60px_-32px_rgba(0,0,0,0.9)] ${card.className}`}
+          className={`${card.visibilityClass} hero-orbit-badge-float pointer-events-none absolute rounded-[22px] border border-white/10 bg-[linear-gradient(180deg,rgba(17,22,33,0.95),rgba(12,16,25,0.9))] p-3.5 shadow-[0_22px_60px_-32px_rgba(0,0,0,0.9)] ${card.className}`}
           style={
             {
               "--orbit-duration": `${card.duration}s`,
@@ -225,10 +252,12 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
             } as CSSProperties
           }
         >
-          <p className="text-xs uppercase tracking-[0.22em] text-accent-warm/85">
+          {/* Tracking trimmed from 0.22em so the two-word titles stay on one
+              line inside the narrower badge. */}
+          <p className="whitespace-nowrap text-xs uppercase tracking-[0.16em] text-accent-warm/85">
             {card.title}
           </p>
-          <p className="mt-3 text-sm leading-6 text-muted-strong">
+          <p className="mt-2.5 text-[0.8rem] leading-5 text-muted-strong">
             {card.copy}
           </p>
         </div>
