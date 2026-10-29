@@ -23,6 +23,9 @@
   --motion-stagger-loose: 0.08s;
   --reveal-distance: 28px;
   --header-offset: 88px;
+  /* Crossfade from the static hero mark to the canvas. Mirrored in
+     lib/three/hero-mark-config.ts as revealFadeMs. */
+  --hero-mark-fade: 520ms;
 }
 
 @theme inline {
@@ -264,7 +267,36 @@ textarea {
 
 [data-orbit-paused] .hero-orbit-glow,
 [data-orbit-paused] .hero-orbit-card-float,
-[data-orbit-paused] .hero-orbit-badge-float {
+[data-orbit-paused] .hero-orbit-badge-float,
+[data-orbit-paused] .hero-mark-fallback {
+  animation-play-state: paused;
+}
+
+/*
+ * The 3D hero mark.
+ *
+ * The static SignatureBlueprint SVG is in the server HTML, so it is what every
+ * tier below "full" shows, what a browser without WebGL shows, what a visitor
+ * with JavaScript off sees, and what comes back if the GPU context is lost or
+ * the frame rate collapses. The canvas crossfades over it only once its first
+ * frame has reached the screen; both layers fill the existing aspect box, so
+ * neither can shift the layout.
+ */
+.hero-mark-fallback {
+  animation: hero-orbit-rise 11s var(--motion-ease-signature) infinite;
+  transition: opacity var(--hero-mark-fade) var(--motion-ease-signature);
+}
+
+/*
+ * The SVG sits immediately after the canvas layer in the DOM, so it fades out
+ * on top of a canvas that is already drawing - one transition for the whole
+ * crossfade. Because the state lives on the canvas layer, removing that layer
+ * (a lost context, a frame-rate collapse, a tier change) fades the SVG straight
+ * back in with no extra state to manage.
+ */
+.hero-mark-canvas[data-ready] + .hero-mark-fallback {
+  opacity: 0;
+  /* Nothing to see, so stop paying for the float. */
   animation-play-state: paused;
 }
 

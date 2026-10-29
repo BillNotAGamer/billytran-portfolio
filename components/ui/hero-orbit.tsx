@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import type { PortfolioData } from "@/data/portfolio";
+import { HeroMark } from "@/components/three/hero-mark";
 import { SignatureGlyph } from "@/components/ui/signature-glyph";
 import { useMotionTier } from "@/components/ui/use-motion-tier";
+import { clearHeroPointer, setHeroPointer } from "@/lib/motion/hero-signals";
 
 const floatingCards = [
   {
@@ -77,6 +79,8 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
       if (tiltFrame.current !== 0) {
         cancelAnimationFrame(tiltFrame.current);
       }
+
+      clearHeroPointer();
     },
     [],
   );
@@ -127,11 +131,16 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
       y: relativeX * MAX_TILT_DEGREES,
     };
 
+    // The 3D mark behind the card reads the pointer from here, so one listener
+    // drives both and the two tilt together rather than drifting apart.
+    setHeroPointer(relativeX, relativeY);
+
     scheduleTiltFrame();
   };
 
   const handlePointerLeave = () => {
     targetTilt.current = { x: 0, y: 0 };
+    clearHeroPointer();
     scheduleTiltFrame();
   };
 
@@ -139,6 +148,8 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
     <div
       ref={rootRef}
       className="relative mx-auto aspect-[0.92] w-full max-w-[540px]"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
     >
       <div
         aria-hidden="true"
@@ -148,12 +159,12 @@ export function HeroOrbit({ data: portfolioData }: { data: PortfolioData }) {
       <div className="absolute inset-0 rounded-[2.25rem] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))]" />
       <div className="absolute inset-[7%] rounded-[2rem] border border-white/[0.06] [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:82px_82px] opacity-40" />
 
+      <HeroMark />
+
       <div className="hero-orbit-card-float absolute inset-[10%]">
         <div
           ref={tiltRef}
-          className="hero-orbit-tilt h-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(160deg,rgba(15,20,31,0.96),rgba(10,13,21,0.9))] p-7 shadow-[0_32px_90px_-36px_rgba(0,0,0,0.85)] sm:p-8"
-          onPointerMove={handlePointerMove}
-          onPointerLeave={handlePointerLeave}
+          className="hero-orbit-tilt h-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(160deg,rgba(15,20,31,0.86),rgba(10,13,21,0.76))] p-7 shadow-[0_32px_90px_-36px_rgba(0,0,0,0.85)] sm:p-8"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(121,161,255,0.18),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(220,180,123,0.08),transparent_22%)]" />
           <div className="absolute inset-x-0 top-10 h-px bg-[linear-gradient(90deg,transparent,rgba(141,224,255,0.35),transparent)]" />
