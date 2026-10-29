@@ -49,12 +49,28 @@ export const HERO_MARK_CONFIG = {
      * of its square box, the 3D mark's is 71% of the band height per unit of
      * scale, and the fallback's box is 119% of the band height. Change this and
      * the crossfade will start to jump, so change .hero-mark-fallback's height
-     * in hero-orbit.tsx with it.
+     * in hero-mark.tsx with it.
+     *
+     * The resting three-quarter pose foreshortens the mark by about 7 % across,
+     * which bought the room for 1.27 to become 1.30. It does not buy more than
+     * that: the floating badges reach about 1.0 world units in from the middle
+     * of the band on both sides, and the mark's own idle sway is worth a few
+     * pixels of width either way, so this leaves it roughly 15 px of clearance
+     * rather than spending all of it.
      */
-    markScale: 1.27,
-    /** Nudge the whole mark, in world units, after it is centred on itself. */
-    offsetX: 0,
-    offsetY: 0,
+    markScale: 1.3,
+    /**
+     * Nudge the whole mark, in world units, after it is centred on itself.
+     *
+     * Centring is done on the geometry's own bounding box, which is not the
+     * same as the centre of what ends up on screen: the mark is not symmetric
+     * in z, so the resting yaw slides its silhouette about 8 px right, and the
+     * warm ring hangs off the top node, which lifts it about 12 px. Left
+     * uncorrected the mark sat 4 px from the top edge of the band with 30 px
+     * spare underneath. One world unit is about 144 px in the band at 1440.
+     */
+    offsetX: -0.042,
+    offsetY: -0.085,
     /**
      * Tube radius in world units. The SVG stroke is 18 units wide, i.e. radius
      * 0.028; a little chunkier reads better with a specular highlight running
@@ -207,23 +223,62 @@ export const HERO_MARK_CONFIG = {
      */
     count: 150,
     minCountRatio: 0.35,
-    /** Spherical shell the field is scattered through, in world units. */
-    innerRadius: 0.95,
-    outerRadius: 1.95,
+    /**
+     * Spherical shell the field is scattered through, in world units. The band
+     * is only 2.25 world units tall, so at the old 0.95-1.95 most of the field
+     * was scattered outside the frame entirely and what did land in it was far
+     * too sparse to read as anything.
+     *
+     * The outer radius is also a hard guarantee, not just a look: the field
+     * only ever rotates about its own centre, so no point can leave this
+     * radius, and the floating badges reach about 1.0 units in from the middle
+     * of the band. At 0.9 a drifting mote can never pass behind badge text.
+     */
+    innerRadius: 0.6,
+    outerRadius: 0.9,
     /**
      * The field is drawn as two Points layers, so sizes vary without a custom
      * shader: `fineSize` for the majority and `boldSize` for the few given by
      * `boldRatio`. Sizes are world units and attenuate with distance.
+     *
+     * One world unit is about 144 px in the band, so the old fine size drew a
+     * 1.3 px soft dot - below the point where a 55 %-alpha falloff survives
+     * being resolved at all. These are about 2 and 5 px. Far enough above
+     * nothing to be seen, far enough below the 0.06 unit node to stay dust.
      */
-    fineSize: 0.009,
-    boldSize: 0.026,
+    fineSize: 0.014,
+    boldSize: 0.034,
     boldRatio: 0.26,
-    opacity: 0.6,
+    opacity: 0.78,
     /** Radians per second around y. Deliberately slow - this is a drift. */
     driftSpeedY: 0.045,
     /** Amplitude in radians, and speed, of the slow x-axis sway. */
     driftSwayX: 0.22,
     driftSpeedX: 0.07,
+  },
+
+  /**
+   * The pose the mark sits in before anything moves it. Idle, pointer and
+   * scroll rotation are all added on top of this.
+   *
+   * Square on to the camera, the two strokes projected onto the same plane and
+   * the 0.185 world units of z between them was invisible: the mark read as a
+   * flat SVG with shading. Turned a little, the primary stroke crosses in front
+   * of the secondary one, the tubes show their round section along their length
+   * and the node sphere stops being a disc.
+   *
+   * -21 degrees of yaw is the useful end of the range: it is enough that the
+   * strokes separate clearly, and short of where the lower horizontal of the
+   * mark starts to foreshorten into a stub and stop reading as a "B". The 9
+   * degrees of pitch is deliberately smaller - the mark is much taller than it
+   * is deep, so a little goes a long way, and more starts to look like the mark
+   * is lying down. The ring around the node, which is already tilted 24/-18
+   * degrees of its own, reads as a ring rather than a circle at this pose.
+   */
+  rest: {
+    rotationXDeg: 9,
+    rotationYDeg: -21,
+    rotationZDeg: 0,
   },
 
   idle: {

@@ -142,7 +142,7 @@ function SignatureMark({ fadeRef }: { fadeRef: HeroMarkSceneProps["fadeRef"] }) 
     }
 
     const elapsed = clock.elapsedTime;
-    const { geometry: shape, idle, pointer, scroll } = HERO_MARK_CONFIG;
+    const { geometry: shape, idle, pointer, rest, scroll } = HERO_MARK_CONFIG;
 
     // Pointer tilt, eased the same way HeroOrbit eases the card in front.
     const targetX = -getHeroPointerY() * pointer.maxTiltDeg * DEGREES;
@@ -154,15 +154,20 @@ function SignatureMark({ fadeRef }: { fadeRef: HeroMarkSceneProps["fadeRef"] }) 
     const progress = getHeroScrollProgress();
 
     // Driven off elapsed time rather than delta, so the float is identical at
-    // any frame rate and nothing accumulates into a spin.
+    // any frame rate and nothing accumulates into a spin. Everything is added
+    // to the resting three-quarter pose, which is what gives the mark its
+    // depth; nothing here replaces it.
     node.rotation.x =
+      rest.rotationXDeg * DEGREES +
       tilt.current.x +
       Math.sin(elapsed * idle.speedX) * idle.amplitudeXDeg * DEGREES;
     node.rotation.y =
+      rest.rotationYDeg * DEGREES +
       tilt.current.y +
       Math.sin(elapsed * idle.speedY) * idle.amplitudeYDeg * DEGREES +
       progress * scroll.rotationDeg * DEGREES;
     node.rotation.z =
+      rest.rotationZDeg * DEGREES +
       Math.sin(elapsed * idle.speedZ) * idle.amplitudeZDeg * DEGREES;
 
     const breathe =
