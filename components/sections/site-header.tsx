@@ -39,7 +39,7 @@ export function SiteHeader({
               <p className="font-display text-lg font-semibold text-foreground">
                 {portfolioData.header.brandName}
               </p>
-              <p className="text-[0.72rem] uppercase tracking-[0.22em] text-muted">
+              <p className="whitespace-nowrap text-[0.72rem] uppercase tracking-[0.22em] text-muted">
                 {portfolioData.header.tagline}
               </p>
             </div>
@@ -59,7 +59,13 @@ export function SiteHeader({
           </nav>
 
           <div className="flex items-center gap-4">
-            <div className="hidden xl:flex xl:items-center xl:gap-3 xl:text-sm xl:text-muted">
+            {/*
+              2xl, not xl. The availability line is 37 characters; at 1280 and
+              1440 it could not share the row with the brand, the nav and the
+              CTA without all three wrapping to two or three lines. It returns
+              at 1536, where the container has the width for it.
+            */}
+            <div className="hidden whitespace-nowrap 2xl:flex 2xl:items-center 2xl:gap-3 2xl:text-sm 2xl:text-muted">
               <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_16px_rgba(141,224,255,0.8)]" />
               {portfolioData.header.availability}
             </div>
@@ -67,7 +73,7 @@ export function SiteHeader({
             <ButtonLink
               href={resolveLocalizedHref(locale, "#contact")}
               variant="secondary"
-              className="hidden sm:inline-flex"
+              className="hidden whitespace-nowrap sm:inline-flex"
             >
               {portfolioData.header.ctaLabel}
             </ButtonLink>
