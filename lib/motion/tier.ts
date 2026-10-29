@@ -74,13 +74,23 @@ export function resolveMotionTier(): MotionTier {
   return "full";
 }
 
+let webGLSupport: boolean | null = null;
+
 /**
- * Reported separately for Phase 3. It deliberately does not feed into
- * resolveMotionTier, because nothing in Phase 2 needs a GPU context.
+ * Reported separately from the tier: the tier describes how much motion the
+ * device and the visitor want, this describes whether a GPU context can be had
+ * at all. The 3D hero needs both.
+ *
+ * The answer is cached because the probe has to create a real context to be
+ * truthful, and a document only has a handful of those to give out.
  */
 export function hasWebGLSupport() {
   if (typeof document === "undefined") {
     return false;
+  }
+
+  if (webGLSupport !== null) {
+    return webGLSupport;
   }
 
   try {
@@ -88,10 +98,18 @@ export function hasWebGLSupport() {
     const context =
       canvas.getContext("webgl2") ??
       canvas.getContext("webgl") ??
-      canvas.getContext("experimental-webgl");
+      (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
 
-    return context !== null;
+    webGLSupport = context !== null;
+
+    // Hand the probe's context straight back, so the scene is not competing
+    // with it for the browser's per-document context budget.
+    if (context) {
+      context.getExtension("WEBGL_lose_context")?.loseContext();
+    }
   } catch {
-    return false;
+    webGLSupport = false;
   }
+
+  return webGLSupport;
 }
